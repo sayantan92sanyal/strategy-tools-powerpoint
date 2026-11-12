@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PowerPoint Shortcuts</title>
+<style>
+  :root { --bg:#f7f8fa; --card:#fff; --ink:#1d2330; --muted:#5d6676; --line:#e3e6ea; --accent:#1f3864; --key:#eef1f5; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14171c; --card:#1d2129; --ink:#e7eaf0; --muted:#9aa3b2; --line:#2c323d; --accent:#8fb0e8; --key:#2a303a; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; }
+  header { padding:28px 32px 8px; display:flex; flex-wrap:wrap; gap:16px; align-items:end; justify-content:space-between; }
+  h1 { margin:0; font-size:22px; }
+  header p { margin:4px 0 0; color:var(--muted); }
+  input { font:inherit; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); min-width:240px; }
+  main { padding:16px 32px 40px; columns:340px; column-gap:20px; }
+  section { break-inside:avoid; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin:0 0 20px; }
+  section.custom { border-color:var(--accent); border-width:2px; }
+  h2 { margin:0 0 8px; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+  table { width:100%; border-collapse:collapse; }
+  td { padding:5px 0; border-top:1px solid var(--line); vertical-align:top; }
+  tr:first-child td { border-top:0; }
+  td.k { white-space:nowrap; text-align:right; padding-left:12px; }
+  kbd { display:inline-block; min-width:22px; text-align:center; padding:1px 6px; margin-left:2px; border-radius:5px; background:var(--key); border:1px solid var(--line); font:12px -apple-system, sans-serif; }
+  footer { padding:0 32px 32px; color:var(--muted); font-size:12px; }
+  a { color:var(--accent); }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>PowerPoint for Mac: Shortcuts</h1>
+    <p>⌘ Command · ⌃ Control · ⌥ Option · ⇧ Shift. Strategy Tools shortcuts are listed first.</p>
+  </div>
+  <input id="q" type="search" placeholder="Filter shortcuts…" autofocus>
+</header>
+<main id="list"></main>
+<footer>
+  Full list from Microsoft: <a href="https://support.microsoft.com/office/keyboard-shortcuts-in-powerpoint-ebb3d20e-dcd4-444f-a38e-bb5c5ed180f4">Keyboard shortcuts in PowerPoint</a>.
+  To add your own shortcut to this page, edit the "Strategy Tools" list in this file.
+</footer>
+<script>
+// Each entry: [description, keys]. Keys are space-separated; each becomes a key cap.
+const GROUPS = [
+  ["Strategy Tools", true, [
+    ["New text box in the middle of the slide", "⌃ Q"],
+    ["Align selected objects left", "⌃ ⌘ ←"],
+    ["Align selected objects right", "⌃ ⌘ →"],
+    ["Align selected objects top", "⌃ ⌘ ↑"],
+    ["Align selected objects bottom", "⌃ ⌘ ↓"],
+    ["Show this cheat sheet", "⇧ ⌘ O"],
+  ]],
+  ["Files", false, [
+    ["New presentation", "⌘ N"],
+    ["Open", "⌘ O"],
+    ["Save", "⌘ S"],
+    ["Save as", "⇧ ⌘ S"],
+    ["Print", "⌘ P"],
+    ["Close window", "⌘ W"],
+    ["Quit PowerPoint", "⌘ Q"],
+  ]],
+  ["Editing", false, [
+    ["Undo", "⌘ Z"],
+    ["Redo", "⌘ Y"],
+    ["Cut", "⌘ X"],
+    ["Copy", "⌘ C"],
+    ["Paste", "⌘ V"],
+    ["Paste special", "⌃ ⌘ V"],
+    ["Select all", "⌘ A"],
+    ["Find", "⌘ F"],
+    ["Replace", "⌃ H"],
+    ["Insert hyperlink", "⌘ K"],
+  ]],
+  ["Text formatting", false, [
+    ["Bold", "⌘ B"],
+    ["Italic", "⌘ I"],
+    ["Underline", "⌘ U"],
+    ["Font dialog", "⌘ T"],
+    ["Increase font size", "⇧ ⌘ >"],
+    ["Decrease font size", "⇧ ⌘ <"],
+    ["Align text left", "⌘ L"],
+    ["Center text", "⌘ E"],
+    ["Align text right", "⌘ R"],
+    ["Justify text", "⌘ J"],
+    ["Copy formatting", "⇧ ⌘ C"],
+    ["Paste formatting", "⇧ ⌘ V"],
+  ]],
+  ["Slides", false, [
+    ["New slide", "⇧ ⌘ N"],
+    ["Duplicate selected slide or object", "⌘ D"],
+    ["Start slide show from beginning", "⇧ ⌘ ↩"],
+    ["Start slide show from current slide", "⌘ ↩"],
+    ["End slide show", "esc"],
+    ["Next slide (in show)", "→"],
+    ["Previous slide (in show)", "←"],
+    ["Black screen (in show)", "B"],
+    ["White screen (in show)", "W"],
+  ]],
+  ["Objects", false, [
+    ["Group", "⌥ ⌘ G"],
+    ["Ungroup", "⇧ ⌥ ⌘ G"],
+    ["Move selected object", "← → ↑ ↓"],
+    ["Select next object", "tab"],
+    ["Duplicate while dragging", "⌥ drag"],
+    ["Keep proportions while resizing", "⇧ drag"],
+  ]],
+];
+
+const list = document.getElementById("list");
+for (const [title, custom, rows] of GROUPS) {
+  const s = document.createElement("section");
+  if (custom) s.className = "custom";
+  s.innerHTML = `<h2>${title}</h2><table>${rows.map(([d, k]) =>
+    `<tr><td>${d}</td><td class="k">${k.split(" ").map(x => `<kbd>${x}</kbd>`).join("")}</td></tr>`).join("")}</table>`;
+  list.appendChild(s);
+}
+document.getElementById("q").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase();
+  for (const s of list.children) {
+    let any = false;
+    for (const tr of s.querySelectorAll("tr")) {
+      const hit = tr.textContent.toLowerCase().includes(q);
+      tr.classList.toggle("hidden", !hit);
+      any = any || hit;
+    }
+    s.classList.toggle("hidden", !any);
+  }
+});
+</script>
+</body>
+</html>

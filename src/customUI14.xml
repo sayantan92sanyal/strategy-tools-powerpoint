@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Strategy Tools ribbon. To add a button: copy a <button> line, give it a
+     new id, label and onAction (a Rb_ callback in src/modRibbon.bas). -->
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui">
+  <ribbon>
+    <tabs>
+      <tab id="stTab" label="Strategy Tools">
+
+        <group id="stFormat" label="Format">
+          <button id="stSwap" label="Swap" size="large" imageMso="RecurrenceEdit"
+                  onAction="Rb_Swap" screentip="Swap objects"
+                  supertip="Select exactly 2 objects. They trade places (by their centres)."/>
+          <button id="stSameSize" label="Same Size" imageMso="ShapeRectangle"
+                  onAction="Rb_SameSize" screentip="Same size"
+                  supertip="Select 2+ objects. All get the width and height of the first one you clicked."/>
+          <button id="stSameWidth" label="Same Width" imageMso="TableColumnsDistribute"
+                  onAction="Rb_SameWidth" screentip="Same width"
+                  supertip="Select 2+ objects. All get the width of the first one you clicked."/>
+          <button id="stSameHeight" label="Same Height" imageMso="TableRowsDistribute"
+                  onAction="Rb_SameHeight" screentip="Same height"
+                  supertip="Select 2+ objects. All get the height of the first one you clicked."/>
+          <button id="stTitle" label="Title Harmonizer" size="large" imageMso="FormatPainter"
+                  onAction="Rb_TitleHarmonizer" screentip="Title Harmonizer"
+                  supertip="Click into a slide title. Every other slide's title gets the same font and size (Title Slide layouts are skipped)."/>
+        </group>
+
+        <group id="stVisuals" label="Visuals">
+          <menu id="stHarvey" label="Harvey Ball" size="large" imageMso="ChartTypePieInsertGallery"
+                screentip="Harvey ball"
+                supertip="Adds a Harvey ball. Select existing Harvey balls first to change their level.">
+            <button id="stHarvey0"   label="0% (empty)"  tag="0"   onAction="Rb_Harvey"/>
+            <button id="stHarvey25"  label="25%"         tag="25"  onAction="Rb_Harvey"/>
+            <button id="stHarvey50"  label="50%"         tag="50"  onAction="Rb_Harvey"/>
+            <button id="stHarvey75"  label="75%"         tag="75"  onAction="Rb_Harvey"/>
+            <button id="stHarvey100" label="100% (full)" tag="100" onAction="Rb_Harvey"/>
+          </menu>
+          <menu id="stMeter" label="Meter" size="large" imageMso="ChartTypeColumnInsertGallery"
+                screentip="Meter"
+                supertip="Adds a 3-bar meter. Select existing meters first to change their level.">
+            <button id="stMeterLow"    label="Low (1 bar)"     tag="1" onAction="Rb_Meter"/>
+            <button id="stMeterMedium" label="Medium (2 bars)" tag="2" onAction="Rb_Meter"/>
+            <button id="stMeterHigh"   label="High (3 bars)"   tag="3" onAction="Rb_Meter"/>
+          </menu>
+        </group>
+
+        <group id="stHelp" label="Help">
+          <button id="stTextBox" label="Text Box" imageMso="TextBoxInsert"
+                  onAction="Rb_TextBox" screentip="New text box (Ctrl+Q)"
+                  supertip="Drops a ready-to-type text box in the middle of the slide."/>
+          <button id="stShortcuts" label="Shortcuts" size="large" imageMso="Help"
+                  onAction="Rb_Shortcuts" screentip="Shortcuts cheat sheet (Cmd+Shift+O)"
+                  supertip="Opens a list of PowerPoint for Mac shortcuts, including the Strategy Tools ones."/>
+        </group>
+
+      </tab>
+    </tabs>
+  </ribbon>
+</customUI>

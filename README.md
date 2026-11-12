@@ -1,0 +1,122 @@
+# Strategy Tools: PowerPoint Add-in for Mac
+
+A PowerPoint add-in with the everyday shortcuts strategy and consulting work relies on: one-click formatting, Harvey balls, meters and keyboard shortcuts. It adds a **Strategy Tools** tab to the PowerPoint ribbon.
+
+Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later).
+
+---
+
+## Features
+
+### Format
+| Button | How to use it |
+|---|---|
+| **Swap** | Select exactly 2 objects. They trade places (by their centres) and keep their own sizes. |
+| **Same Size** | Select 2+ objects. All of them take the width and height of the **first object you clicked**. |
+| **Same Width** | As above, width only. |
+| **Same Height** | As above, height only. |
+| **Title Harmonizer** | Click into a slide title. Every other slide's title gets the same font and font size. Slides with a *Title Slide* layout are skipped. |
+
+### Visuals
+| Button | How to use it |
+|---|---|
+| **Harvey Ball ▾** | Pick 0%, 25%, 50%, 75% or 100%. A Harvey ball appears in the middle of the slide. To change an existing one, select it and pick a new level. |
+| **Meter ▾** | Pick Low, Medium or High. A 3-bar rising meter appears. Select existing meters to change them. |
+
+Harvey balls and meters use the template's main accent colour (Accent 1) on light grey, so they match whichever client template you're in.
+
+### Keyboard shortcuts
+| Keys | Action |
+|---|---|
+| **Ctrl + Q** | New text box in the middle of the slide, ready to type |
+| **Ctrl + Cmd + ←** | Align selected objects left |
+| **Ctrl + Cmd + →** | Align selected objects right |
+| **Ctrl + Cmd + ↑** | Align selected objects top |
+| **Ctrl + Cmd + ↓** | Align selected objects bottom |
+| **Shift + Cmd + O** | Open the shortcuts cheat sheet (PowerPoint for Mac shortcuts plus these) |
+
+With one object selected, the align shortcuts align it to the slide. With two or more, they align the objects to each other.
+
+---
+
+## Install
+
+Send colleagues **`dist/Strategy Tools.zip`**. Full steps are in [src/installer/INSTALL.md](src/installer/INSTALL.md), which is also inside the zip. In short:
+
+1. Quit PowerPoint and unzip the folder.
+2. Right-click **Install Strategy Tools.command** → **Open** (click **Open** again if macOS warns).
+3. Allow the prompts: **OK** to let Terminal control PowerPoint, **Grant Access**, then **Enable Macros**.
+4. Restart PowerPoint. The **Strategy Tools** tab appears.
+
+To update, run the installer again. To remove it, run **Uninstall Strategy Tools.command**.
+
+---
+
+## How it works
+
+- **Add-in (`StrategyTools.ppam`):** a macro-enabled PowerPoint add-in. The VBA code and ribbon live as plain text in `src/`, and `scripts/build.py` packs them into the `.ppam` directly, with no PowerPoint VBA editor involved. PowerPoint compiles the code the first time it loads the add-in.
+- **Ctrl+Q and Shift+Cmd+O:** PowerPoint for Mac doesn't let add-ins register shortcuts, so the installer creates two macOS Quick Actions (in `~/Library/Services`) that only work inside PowerPoint, and binds the keys to them.
+- **Ctrl+Cmd+arrows:** macOS App Shortcuts bound to PowerPoint's own **Arrange → Align** menu items.
+- **Cheat sheet:** a local web page (`shortcuts.html`) opened in your browser.
+
+Installed files go to `~/Library/Application Support/StrategyTools`.
+
+---
+
+## Project layout
+
+```
+src/
+  modCommon.bas        shared helpers (selection, messages, colours, constants)
+  modFormat.bas        Swap, Same Size/Width/Height, Title Harmonizer
+  modVisuals.bas       Harvey balls, meters
+  modHelp.bas          Ctrl+Q text box, cheat sheet
+  modRibbon.bas        ribbon button callbacks
+  customUI14.xml       ribbon tab layout
+  shortcuts.html       cheat sheet page
+  base.pptx            empty PowerPoint package the add-in is built on
+  installer/           install/uninstall scripts + INSTALL.md
+tests/
+  modTests.bas         in-PowerPoint tests (not shipped)
+scripts/
+  build.py             builds dist/StrategyTools.ppam and dist/Strategy Tools.zip
+  ovba.py              writes the VBA project file (vbaProject.bin)
+  run-tests.sh         restarts PowerPoint and runs tests
+docs/
+  design.md            design and decisions
+  adding-a-feature.md  how to add new buttons/shortcuts
+```
+
+---
+
+## Development
+
+Requires macOS, PowerPoint for Mac and Python 3 (standard library only).
+
+```bash
+# Build the add-in and the shareable zip
+python3 scripts/build.py
+
+# Run tests inside PowerPoint (WARNING: quits PowerPoint without saving)
+scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow
+```
+
+Each test prints `PASS` or `FAIL …`. `T_Render` also exports a slide with every visual to a PNG so you can check how they look.
+
+To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In short: write `Public Sub ST_YourFeature()` in a module, add a `Rb_` callback in `modRibbon.bas`, add a `<button>` to `customUI14.xml` and rebuild.
+
+**Gotchas**
+- The Office type library isn't referenced. Use numbers or the `ST_` constants in `modCommon.bas` instead of `msoTrue`, `msoShapeOval` and the like. PowerPoint constants (`ppLayoutBlank`…) are fine.
+- Module-level `Dim`/`Public`/`Const` lines must come before the first procedure, or the whole add-in fails to compile.
+- If PowerPoint stops responding to scripted tests, quit it fully (Cmd+Q) and run again.
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| No Strategy Tools tab | Tools → PowerPoint Add-ins… and tick **StrategyTools**. If it's missing, click **+**, press Shift+Cmd+G, paste `~/Library/Application Support/StrategyTools` and choose the `.ppam`. |
+| "Macros are disabled" | PowerPoint → Settings → Security & Privacy → *Disable all macros with notification*, restart, then click **Enable Macros**. |
+| A shortcut does nothing | Restart PowerPoint. Check System Settings → Keyboard → Keyboard Shortcuts → **Services** ("ST New Text Box", "ST Shortcuts Cheat Sheet") and **App Shortcuts**. |
+| Ctrl+Q does nothing the first time | macOS asks permission to control PowerPoint. Click **OK**, or allow it in System Settings → Privacy & Security → Automation. |
