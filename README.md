@@ -87,6 +87,7 @@ tests/
 scripts/
   build.py             builds dist/StrategyTools.ppam and dist/Strategy Tools.zip
   ovba.py              writes the VBA project file (vbaProject.bin)
+  icons.py             draws the ribbon menu icons (PNG) at build time
   run-tests.sh         restarts PowerPoint and runs tests
 docs/
   design.md            design and decisions

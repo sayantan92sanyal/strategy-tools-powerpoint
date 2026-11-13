@@ -27,6 +27,7 @@ Everything is plain text in `src/`. The build script turns it into the add-in, s
    `Public Sub Rb_YourFeature(control As Object): ST_YourFeature: End Sub`
 3. **Add a button** in `src/customUI14.xml` inside the right `<group>`:
    `<button id="stYourFeature" label="Your Feature" imageMso="..." onAction="Rb_YourFeature"/>`
+   - Use `imageMso="..."` for a built-in Office icon, or `image="stYourIcon"` for a custom one: add a function that draws it in `scripts/icons.py` and register the name in `all_icons()`. The build stops with an error if a ribbon `image=` name has no icon.
 4. **(Optional) a keyboard shortcut:** add a `make_workflow` line and a `defaults write pbs` line in `src/installer/Install Strategy Tools.command` (copy the Ctrl+Q ones), and add it to the "Strategy Tools" group in `src/shortcuts.html`.
 5. **(Optional) a test:** add a `T_YourFeature()` function in `tests/modTests.bas` that returns "PASS" or "FAIL ...", then run `scripts/run-tests.sh T_YourFeature`.
 6. **Build:** `python3 scripts/build.py` and share `dist/Strategy Tools.zip`. Colleagues re-run the installer to update.

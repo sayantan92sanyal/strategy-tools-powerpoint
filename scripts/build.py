@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from ovba import build_vba_project  # noqa: E402
+from icons import all_icons  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
@@ -55,6 +56,7 @@ def package(out_path: Path, main_ct: str, vba_bin: bytes, with_ui: bool):
                 xml = xml.replace(
                     "<Default Extension=\"xml\"",
                     '<Default Extension="bin" ContentType="application/vnd.ms-office.vbaProject"/>'
+                    '<Default Extension="png" ContentType="image/png"/>'
                     "<Default Extension=\"xml\"", 1)
                 data = xml.encode("utf-8")
             elif name == "_rels/.rels" and with_ui:
@@ -72,7 +74,23 @@ def package(out_path: Path, main_ct: str, vba_bin: bytes, with_ui: bool):
             out.writestr(item.filename, data)
         out.writestr("ppt/vbaProject.bin", vba_bin)
         if with_ui:
-            out.writestr("customUI/customUI14.xml", (SRC / "customUI14.xml").read_bytes())
+            ui = (SRC / "customUI14.xml").read_text(encoding="utf-8")
+            out.writestr("customUI/customUI14.xml", ui.encode("utf-8"))
+            # Custom icons: every image="name" in the ribbon XML must exist.
+            icons = all_icons()
+            used = sorted(set(re.findall(r'\bimage="([^"]+)"', ui)))
+            missing = [n for n in used if n not in icons]
+            if missing:
+                raise SystemExit(f"customUI14.xml uses unknown icons: {missing}")
+            rels = "".join(
+                f'<Relationship Id="{n}" Type="http://schemas.openxmlformats.org/officeDocument/2006/'
+                f'relationships/image" Target="images/{n}.png"/>' for n in used)
+            out.writestr("customUI/_rels/customUI14.xml.rels",
+                         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                         '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+                         + rels + "</Relationships>")
+            for n in used:
+                out.writestr(f"customUI/images/{n}.png", icons[n])
 
 
 def main():

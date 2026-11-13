@@ -25,39 +25,39 @@
         </group>
 
         <group id="stVisuals" label="Visuals">
-          <menu id="stHarvey" label="Harvey Ball" size="large" imageMso="ChartTypePieInsertGallery"
+          <menu id="stHarvey" label="Harvey Ball" size="large" image="stHv75" itemSize="large"
                 screentip="Harvey ball"
                 supertip="Adds a Harvey ball. Select existing Harvey balls first to change their level.">
-            <button id="stHarvey0"   label="0% (empty)"  tag="0"   onAction="Rb_Harvey"/>
-            <button id="stHarvey25"  label="25%"         tag="25"  onAction="Rb_Harvey"/>
-            <button id="stHarvey50"  label="50%"         tag="50"  onAction="Rb_Harvey"/>
-            <button id="stHarvey75"  label="75%"         tag="75"  onAction="Rb_Harvey"/>
-            <button id="stHarvey100" label="100% (full)" tag="100" onAction="Rb_Harvey"/>
+            <button id="stHarvey0" image="stHv0"   label="0% (empty)"  tag="0"   onAction="Rb_Harvey"/>
+            <button id="stHarvey25" image="stHv25"  label="25%"         tag="25"  onAction="Rb_Harvey"/>
+            <button id="stHarvey50" image="stHv50"  label="50%"         tag="50"  onAction="Rb_Harvey"/>
+            <button id="stHarvey75" image="stHv75"  label="75%"         tag="75"  onAction="Rb_Harvey"/>
+            <button id="stHarvey100" image="stHv100" label="100% (full)" tag="100" onAction="Rb_Harvey"/>
           </menu>
-          <menu id="stMeter" label="Meter" size="large" imageMso="ChartTypeColumnInsertGallery"
+          <menu id="stMeter" label="Meter" size="large" image="stMeterMedium" itemSize="large"
                 screentip="Meter"
                 supertip="Adds a 3-bar meter. Select existing meters first to change their level.">
-            <button id="stMeterLow"    label="Low (1 bar)"     tag="1" onAction="Rb_Meter"/>
-            <button id="stMeterMedium" label="Medium (2 bars)" tag="2" onAction="Rb_Meter"/>
-            <button id="stMeterHigh"   label="High (3 bars)"   tag="3" onAction="Rb_Meter"/>
+            <button id="stMeterLow" image="stMeterLow"    label="Low (1 bar)"     tag="1" onAction="Rb_Meter"/>
+            <button id="stMeterMedium" image="stMeterMedium" label="Medium (2 bars)" tag="2" onAction="Rb_Meter"/>
+            <button id="stMeterHigh" image="stMeterHigh"   label="High (3 bars)"   tag="3" onAction="Rb_Meter"/>
           </menu>
-          <menu id="stStatus" label="Status" size="large" imageMso="ReviewAcceptChange"
+          <menu id="stStatus" label="Status" size="large" image="stStatusComplete" itemSize="large"
                 screentip="Status icon"
                 supertip="Adds a status icon. Select existing status icons first to change them.">
-            <button id="stStatusComplete"   label="Complete (green tick)"     tag="COMPLETE"   onAction="Rb_Status"/>
-            <button id="stStatusInProgress" label="In progress (amber)"       tag="INPROGRESS" onAction="Rb_Status"/>
-            <button id="stStatusDelayed"    label="Delayed (red cross)"       tag="DELAYED"    onAction="Rb_Status"/>
-            <button id="stStatusNotStarted" label="Not started (grey)"        tag="NOTSTARTED" onAction="Rb_Status"/>
+            <button id="stStatusComplete" image="stStatusComplete"   label="Complete (green tick)"     tag="COMPLETE"   onAction="Rb_Status"/>
+            <button id="stStatusInProgress" image="stStatusInProgress" label="In progress (amber)"       tag="INPROGRESS" onAction="Rb_Status"/>
+            <button id="stStatusDelayed" image="stStatusDelayed"    label="Delayed (red cross)"       tag="DELAYED"    onAction="Rb_Status"/>
+            <button id="stStatusNotStarted" image="stStatusNotStarted" label="Not started (grey)"        tag="NOTSTARTED" onAction="Rb_Status"/>
           </menu>
           <button id="stChevrons" label="Chevrons" size="large" imageMso="SmartArtInsert"
                   onAction="Rb_Chevrons" screentip="Chevrons"
                   supertip="Asks how many, then adds a row of phase chevrons with a detail text box under each."/>
-          <menu id="stTracker" label="Tracker" size="large" imageMso="Numbering"
+          <menu id="stTracker" label="Tracker" size="large" image="stTrackerNumber" itemSize="large"
                 screentip="Tracker"
                 supertip="Adds a numbered or lettered circle. Each click adds the next one on the slide.">
-            <button id="stTrackerNumber" label="Next number (1, 2, 3...)" onAction="Rb_TrackerNumber"/>
-            <button id="stTrackerLetter" label="Next letter (A, B, C...)" onAction="Rb_TrackerLetter"/>
-            <button id="stTrackerCustom" label="Custom text..."           onAction="Rb_TrackerCustom"/>
+            <button id="stTrackerNumber" image="stTrackerNumber" label="Next number (1, 2, 3...)" onAction="Rb_TrackerNumber"/>
+            <button id="stTrackerLetter" image="stTrackerLetter" label="Next letter (A, B, C...)" onAction="Rb_TrackerLetter"/>
+            <button id="stTrackerCustom" image="stTrackerCustom" label="Custom text..."           onAction="Rb_TrackerCustom"/>
           </menu>
         </group>
 
