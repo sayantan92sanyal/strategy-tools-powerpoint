@@ -278,3 +278,176 @@ fail:
     T_HarveyDetail = "FAIL error " & Err.Description & " msg=" & gLastMessage
     CloseDeck p
 End Function
+
+Public Function T_Status() As String
+    On Error GoTo fail
+    gQuiet = True
+    gLastMessage = ""
+    Dim p As Object, sld As Object, g As Object, r As String, x As Single
+    Set p = NewDeck(1, ppLayoutBlank)
+    Set sld = p.Slides(1)
+    ActiveWindow.Selection.Unselect
+    ST_StatusComplete
+    If sld.Shapes.Count <> 1 Then r = "FAIL count " & sld.Shapes.Count & " msg=" & gLastMessage: GoTo done
+    Set g = sld.Shapes(1)
+    If g.Tags("ST_TYPE") <> "STATUS" Or g.Tags("ST_LEVEL") <> "COMPLETE" Or g.GroupItems.Count <> 2 Then r = "FAIL complete": GoTo done
+    If Not Near(g.Width, 28.8) Then r = "FAIL size " & g.Width: GoTo done
+    ' move it, then change status in place: position kept, still one shape
+    g.Left = 100: g.Top = 50
+    g.Select
+    ST_StatusDelayed
+    Set g = sld.Shapes(1)
+    If sld.Shapes.Count <> 1 Or g.Tags("ST_LEVEL") <> "DELAYED" Or g.GroupItems.Count <> 3 Then r = "FAIL update " & sld.Shapes.Count: GoTo done
+    If Not (Near(g.Left, 100) And Near(g.Top, 50)) Then r = "FAIL update moved it " & g.Left & "," & g.Top: GoTo done
+    ActiveWindow.Selection.Unselect
+    ST_StatusInProgress
+    ActiveWindow.Selection.Unselect
+    ST_StatusNotStarted
+    If sld.Shapes.Count <> 3 Then r = "FAIL add more": GoTo done
+    If sld.Shapes(2).Tags("ST_LEVEL") <> "INPROGRESS" Or sld.Shapes(2).GroupItems.Count < 5 Then r = "FAIL dotted tick": GoTo done
+    If gLastMessage <> "" Then r = "FAIL msg=" & gLastMessage: GoTo done
+    r = "PASS"
+done:
+    T_Status = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_Status = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_Chevrons() As String
+    On Error GoTo fail
+    gQuiet = True
+    gLastMessage = ""
+    Dim p As Object, sld As Object, g As Object, r As String, i As Long, W As Single
+    Set p = NewDeck(1, ppLayoutTitleOnly)
+    Set sld = p.Slides(1)
+    W = p.PageSetup.SlideWidth
+    AddChevrons 4
+    Set g = sld.Shapes(sld.Shapes.Count)
+    If g.Tags("ST_TYPE") <> "CHEVRONS" Or g.GroupItems.Count <> 8 Then r = "FAIL group msg=" & gLastMessage: GoTo done
+    If g.Left < 0 Or g.Left + g.Width > W + 0.5 Then r = "FAIL off slide": GoTo done
+    If g.Top + g.Height > p.PageSetup.SlideHeight Then r = "FAIL too tall": GoTo done
+    ' aligned with the title
+    If Not Near(g.Left, sld.Shapes.Title.Left) Then r = "FAIL not aligned to title " & g.Left & " vs " & sld.Shapes.Title.Left: GoTo done
+    ' chevrons left-to-right, details under them
+    Dim c1 As Object, c2 As Object, d1 As Object
+    For i = 1 To g.GroupItems.Count
+        If g.GroupItems(i).Name = "ST_Chevron1" Then Set c1 = g.GroupItems(i)
+        If g.GroupItems(i).Name = "ST_Chevron2" Then Set c2 = g.GroupItems(i)
+        If g.GroupItems(i).Name = "ST_Detail1" Then Set d1 = g.GroupItems(i)
+    Next i
+    If c1 Is Nothing Or c2 Is Nothing Or d1 Is Nothing Then r = "FAIL names": GoTo done
+    If c2.Left <= c1.Left Then r = "FAIL order": GoTo done
+    If d1.Top < c1.Top + c1.Height Then r = "FAIL detail not below": GoTo done
+    If c1.TextFrame.TextRange.Text <> "Phase 1" Then r = "FAIL label": GoTo done
+    ' out of range gives a message
+    AddChevrons 12
+    If InStr(gLastMessage, "2 to 8") = 0 And InStr(gLastMessage, "from 2") = 0 Then r = "FAIL range msg=" & gLastMessage: GoTo done
+    r = "PASS"
+done:
+    T_Chevrons = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_Chevrons = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_Trackers() As String
+    On Error GoTo fail
+    gQuiet = True
+    gLastMessage = ""
+    Dim p As Object, sld As Object, r As String, s As String, i As Long, shp As Object
+    Set p = NewDeck(1, ppLayoutBlank)
+    Set sld = p.Slides(1)
+    ST_TrackerNumber
+    ST_TrackerNumber
+    ST_TrackerNumber
+    ST_TrackerLetter
+    ST_TrackerLetter
+    AddTracker "CUSTOM", "2a"
+    For Each shp In sld.Shapes
+        s = s & shp.TextFrame.TextRange.Text & ","
+    Next shp
+    If s <> "1,2,3,A,B,2a," Then r = "FAIL texts=" & s & " msg=" & gLastMessage: GoTo done
+    ' no two trackers in the same spot
+    For i = 2 To 3
+        If Near(sld.Shapes(i).Top, sld.Shapes(i - 1).Top) And Near(sld.Shapes(i).Left, sld.Shapes(i - 1).Left) Then r = "FAIL stacked": GoTo done
+    Next i
+    ' deleting 2 and adding again continues from the highest (4)
+    sld.Shapes(2).Delete
+    ST_TrackerNumber
+    If sld.Shapes(sld.Shapes.Count).TextFrame.TextRange.Text <> "4" Then r = "FAIL next after delete": GoTo done
+    r = "PASS"
+done:
+    T_Trackers = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_Trackers = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+' Renders the new visuals for a visual check.
+Public Function T_Render2() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, sld As Object, i As Long, path As String, st As Variant
+    Set p = NewDeck(1, ppLayoutTitleOnly)
+    Set sld = p.Slides(1)
+    sld.Shapes.Title.TextFrame.TextRange.Text = "Project roadmap"
+    AddChevrons 4
+    st = Array("COMPLETE", "INPROGRESS", "DELAYED", "NOTSTARTED")
+    For i = 0 To 3
+        ActiveWindow.Selection.Unselect
+        StatusIcon st(i)
+        With sld.Shapes(sld.Shapes.Count)
+            .LockAspectRatio = ST_TRUE
+            .Width = 40
+            .Left = 120 + i * 70: .Top = 440
+        End With
+    Next i
+    For i = 1 To 3
+        ST_TrackerNumber
+    Next i
+    ST_TrackerLetter
+    ST_TrackerLetter
+    path = Environ("TMPDIR") & "st_render2.png"
+    sld.Export path, "PNG", 1280, 720
+    T_Render2 = "PASS " & path
+    CloseDeck p
+    Exit Function
+fail:
+    T_Render2 = "FAIL error " & Err.Description
+    CloseDeck p
+End Function
+
+Public Function T_TrackerOverlap() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, sld As Object, i As Long, j As Long
+    Set p = NewDeck(1, ppLayoutBlank)
+    Set sld = p.Slides(1)
+    ST_TrackerNumber
+    ST_TrackerNumber
+    ST_TrackerLetter
+    ST_TrackerLetter
+    AddTracker "CUSTOM", "x"
+    For i = 1 To sld.Shapes.Count
+        For j = i + 1 To sld.Shapes.Count
+            If Abs(sld.Shapes(i).Left - sld.Shapes(j).Left) < 21 And Abs(sld.Shapes(i).Top - sld.Shapes(j).Top) < 21 Then
+                T_TrackerOverlap = "FAIL overlap " & sld.Shapes(i).TextFrame.TextRange.Text & "/" & sld.Shapes(j).TextFrame.TextRange.Text
+                CloseDeck p
+                Exit Function
+            End If
+        Next j
+    Next i
+    T_TrackerOverlap = "PASS"
+    CloseDeck p
+    Exit Function
+fail:
+    T_TrackerOverlap = "FAIL error " & Err.Description
+    CloseDeck p
+End Function

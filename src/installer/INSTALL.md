@@ -36,6 +36,9 @@ The first time you press **Ctrl+Q**, macOS asks whether it can control PowerPoin
 | **Title Harmonizer** | Click into a slide title. All other slide titles get its font and size (title slides are skipped). |
 | **Harvey Ball ▾** | Adds a 0/25/50/75/100% Harvey ball. Select existing balls first to change their level. |
 | **Meter ▾** | Adds a Low/Medium/High 3-bar meter. Select existing meters first to change them. |
+| **Status ▾** | Complete / In progress / Delayed / Not started icons. Select existing icons first to change them. |
+| **Chevrons** | Asks how many, then adds a row of phase chevrons with a detail text box under each. |
+| **Tracker ▾** | Adds the next numbered (1, 2, 3…) or lettered (A, B, C…) circle, or your own short text. |
 | **Ctrl+Q** | New text box in the middle of the slide, ready to type. |
 | **Ctrl+Cmd+← → ↑ ↓** | Align selected objects left / right / top / bottom (one object aligns to the slide). |
 | **Shift+Cmd+O** or **Shortcuts** button | Opens the shortcuts cheat sheet. |

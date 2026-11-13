@@ -22,8 +22,11 @@ Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later).
 |---|---|
 | **Harvey Ball ▾** | Pick 0%, 25%, 50%, 75% or 100%. A Harvey ball appears in the middle of the slide. To change an existing one, select it and pick a new level. |
 | **Meter ▾** | Pick Low, Medium or High. A 3-bar rising meter appears. Select existing meters to change them. |
+| **Status ▾** | Complete (green circle, white tick), In progress (amber circle, dotted tick), Delayed (red circle, white cross), Not started (grey circle, white dash). Select existing icons and pick a status to change them in place. |
+| **Chevrons** | Asks how many (2–8), then adds a row of "Phase 1…n" chevrons lined up with the slide title, with a bulleted detail text box under each. All grouped. |
+| **Tracker ▾** | **Next number** / **Next letter** adds a small solid circle with the next number (1, 2, 3…) or letter (A, B, C…) on the slide. **Custom…** lets you type up to 3 characters. New trackers never land on top of existing ones. |
 
-Harvey balls and meters use the template's main accent colour (Accent 1) on light grey, so they match whichever client template you're in.
+Harvey balls, meters, chevrons and trackers use the template's main accent colour (Accent 1), so they match whichever client template you're in. Status icons use fixed traffic-light colours, so status reads the same everywhere.
 
 ### Keyboard shortcuts
 | Keys | Action |
@@ -70,6 +73,9 @@ src/
   modCommon.bas        shared helpers (selection, messages, colours, constants)
   modFormat.bas        Swap, Same Size/Width/Height, Title Harmonizer
   modVisuals.bas       Harvey balls, meters
+  modStatus.bas        status icons
+  modChevrons.bas      phase chevrons + detail boxes
+  modTrackers.bas      numbered / lettered trackers
   modHelp.bas          Ctrl+Q text box, cheat sheet
   modRibbon.bas        ribbon button callbacks
   customUI14.xml       ribbon tab layout
@@ -98,16 +104,18 @@ Requires macOS, PowerPoint for Mac and Python 3 (standard library only).
 python3 scripts/build.py
 
 # Run tests inside PowerPoint (WARNING: quits PowerPoint without saving)
-scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow
+scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow \
+  T_Status T_Chevrons T_Trackers T_TrackerOverlap
 ```
 
-Each test prints `PASS` or `FAIL …`. `T_Render` also exports a slide with every visual to a PNG so you can check how they look.
+Each test prints `PASS` or `FAIL …`. `T_Render` and `T_Render2` also export a slide with every visual to a PNG so you can check how they look.
 
 To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In short: write `Public Sub ST_YourFeature()` in a module, add a `Rb_` callback in `modRibbon.bas`, add a `<button>` to `customUI14.xml` and rebuild.
 
 **Gotchas**
 - The Office type library isn't referenced. Use numbers or the `ST_` constants in `modCommon.bas` instead of `msoTrue`, `msoShapeOval` and the like. PowerPoint constants (`ppLayoutBlank`…) are fine.
 - Module-level `Dim`/`Public`/`Const` lines must come before the first procedure, or the whole add-in fails to compile.
+- Don't use VBA keywords as variable names (`circle`, `line`…), and never start a line with a bare call followed by `:` (`ST_Foo: ST_Foo`), because VBA reads it as a label.
 - If PowerPoint stops responding to scripted tests, quit it fully (Cmd+Q) and run again.
 
 ---

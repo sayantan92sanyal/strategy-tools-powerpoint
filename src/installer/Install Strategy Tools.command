@@ -176,6 +176,13 @@ if osascript <<OSA
 with timeout of 180 seconds
 tell application "Microsoft PowerPoint"
   activate
+  -- switch off any other copy of Strategy Tools (e.g. an older location)
+  repeat with old in add ins
+    if name of old is "StrategyTools" and full name of old is not "$SUPPORT/StrategyTools.ppam" then
+      set loaded of old to false
+      set auto load of old to false
+    end if
+  end repeat
   set a to register add in "$SUPPORT/StrategyTools.ppam"
   set loaded of a to true
   set auto load of a to true

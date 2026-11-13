@@ -82,7 +82,7 @@ def main():
     (DIST / "vbaProject.bin").write_bytes(vba_bin)
     package(DIST / "StrategyTools.ppam", ADDIN_CT, vba_bin, with_ui=(SRC / "customUI14.xml").exists())
     if "--pptm" in sys.argv:
-        test_bin = build_vba_project(mods + load_modules(ROOT / "tests"))
+        test_bin = build_vba_project(mods + load_modules(ROOT / "tests"), project_name="StrategyToolsTest")
         package(DIST / "StrategyTools-test.pptm", PPTM_CT, test_bin, with_ui=False)
     bundle(DIST / "StrategyTools.ppam")
     print(f"Built {DIST / 'StrategyTools.ppam'} with modules: {', '.join(m for m, _ in mods)}")

@@ -21,5 +21,15 @@ Public Sub Rb_Meter(control As Object)
     Meter CLng(control.Tag)
 End Sub
 
+' Status menu: the button's tag holds COMPLETE / INPROGRESS / DELAYED / NOTSTARTED.
+Public Sub Rb_Status(control As Object)
+    StatusIcon CStr(control.Tag)
+End Sub
+
+Public Sub Rb_Chevrons(control As Object):      ST_Chevrons:        End Sub
+Public Sub Rb_TrackerNumber(control As Object): ST_TrackerNumber:   End Sub
+Public Sub Rb_TrackerLetter(control As Object): ST_TrackerLetter:   End Sub
+Public Sub Rb_TrackerCustom(control As Object): ST_TrackerCustom:   End Sub
+
 Public Sub Rb_TextBox(control As Object):       ST_AddTextBox:      End Sub
 Public Sub Rb_Shortcuts(control As Object):     ST_ShowShortcuts:   End Sub

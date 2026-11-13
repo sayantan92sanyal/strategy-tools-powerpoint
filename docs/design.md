@@ -96,3 +96,11 @@ Alignment uses PowerPoint's own behaviour: with 2+ objects they align to each ot
 - The default text box: about 3" wide, using the theme's body font at 14 pt, with auto-fit switched on.
 - The cheat sheet is a VBA UserForm with a scrollable read-only text area. If UserForms prove unreliable on Mac, fall back to opening a bundled HTML page.
 - Each button is a single undo step where PowerPoint allows it.
+
+## Additions (2026-11-12): status icons, chevrons, trackers
+
+All three go in the **Visuals** group.
+
+- **Status ▾**: Complete (green #2E9E5B circle, white tick), In progress (amber #F0A202 circle, tick drawn as white dots), Delayed (red #D64545 circle, white X), Not started (grey #A3AAB5 circle, white dash). The user chose four states over three. Fixed colours, not theme colours. About 0.4". Selecting existing icons and picking a status redraws them in place (same position and size).
+- **Chevrons**: an input box asks for 2–8. One click gives a row of chevrons plus a bulleted, borderless detail text box under each (the user picked this over chevrons only). *(Builder's call)* The first shape is a flat-left pentagon. The row lines up with the title placeholder's left edge and width when there is one, otherwise it uses 6% margins, and it sits just under the title. Labels read "Phase 1…n" in white bold 14 pt on Accent 1. Everything is one group tagged CHEVRONS.
+- **Tracker ▾**: Next number, Next letter, Custom… (up to 3 characters). Each tracker is a 0.3" Accent 1 circle with bold white text. "Next" uses the highest existing tracker of that kind on the slide. *(Builder's call)* Each new tracker is placed below the previous one of its kind and steps to a free spot, so trackers never overlap.

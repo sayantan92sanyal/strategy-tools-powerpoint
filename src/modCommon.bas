@@ -87,3 +87,40 @@ End Function
 Public Sub ReportError(ByVal where As String)
     Msg "Sorry, " & where & " didn't work: " & Err.Description
 End Sub
+
+' Group freshly added shapes, then give the parts their fixed names.
+' Shapes are grouped by unique temporary names because index/z-order numbers
+' shift once the slide already contains groups.
+Public Function GroupShapes(ByVal sld As Object, ByVal shapes As Variant, ByVal finalNames As Variant) As Object
+    Dim i As Long, stamp As String, names() As Variant
+    stamp = "ST_tmp_" & Format(Now, "hhmmss") & "_" & CLng(Rnd * 1000000) & "_"
+    ReDim names(LBound(shapes) To UBound(shapes))
+    For i = LBound(shapes) To UBound(shapes)
+        names(i) = stamp & i
+        shapes(i).Name = names(i)
+    Next i
+    Dim grp As Object, item As Object
+    Set grp = sld.Shapes.Range(names).Group
+    For Each item In grp.GroupItems
+        For i = LBound(names) To UBound(names)
+            If item.Name = names(i) Then item.Name = finalNames(i)
+        Next i
+    Next item
+    Set GroupShapes = grp
+End Function
+
+' Selected top-level shapes whose ST_TYPE tag matches kind (each once).
+Public Function SelectedVisuals(ByVal kind As String) As Collection
+    Dim result As New Collection
+    Dim sr As Object, i As Long, s As Object
+    Set sr = SelectedShapes()
+    If Not sr Is Nothing Then
+        On Error Resume Next   ' Collection key de-duplicates groups
+        For i = 1 To sr.Count
+            Set s = TopLevel(sr(i))
+            If TagOf(s, "ST_TYPE") = kind Then result.Add s, s.Name & "|" & s.Id
+        Next i
+        On Error GoTo 0
+    End If
+    Set SelectedVisuals = result
+End Function

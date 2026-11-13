@@ -15,6 +15,11 @@ for _ in $(seq 1 30); do
 done
 sleep 2
 for m in "$@"; do
-  out=$(osascript -e 'with timeout of 20 seconds' -e "tell application \"Microsoft PowerPoint\" to run VB macro macro name \"$m\"" -e 'end timeout' 2>&1)
+  # PowerPoint can report error -18 for a few seconds after start-up; retry.
+  for attempt in 1 2 3 4; do
+    out=$(osascript -e 'with timeout of 30 seconds' -e "tell application \"Microsoft PowerPoint\" to run VB macro macro name \"$m\"" -e 'end timeout' 2>&1)
+    [[ "$out" == *"(-18)"* ]] || break
+    sleep 4
+  done
   echo "$m => $out"
 done

@@ -41,6 +41,24 @@
             <button id="stMeterMedium" label="Medium (2 bars)" tag="2" onAction="Rb_Meter"/>
             <button id="stMeterHigh"   label="High (3 bars)"   tag="3" onAction="Rb_Meter"/>
           </menu>
+          <menu id="stStatus" label="Status" size="large" imageMso="ReviewAcceptChange"
+                screentip="Status icon"
+                supertip="Adds a status icon. Select existing status icons first to change them.">
+            <button id="stStatusComplete"   label="Complete (green tick)"     tag="COMPLETE"   onAction="Rb_Status"/>
+            <button id="stStatusInProgress" label="In progress (amber)"       tag="INPROGRESS" onAction="Rb_Status"/>
+            <button id="stStatusDelayed"    label="Delayed (red cross)"       tag="DELAYED"    onAction="Rb_Status"/>
+            <button id="stStatusNotStarted" label="Not started (grey)"        tag="NOTSTARTED" onAction="Rb_Status"/>
+          </menu>
+          <button id="stChevrons" label="Chevrons" size="large" imageMso="SmartArtInsert"
+                  onAction="Rb_Chevrons" screentip="Chevrons"
+                  supertip="Asks how many, then adds a row of phase chevrons with a detail text box under each."/>
+          <menu id="stTracker" label="Tracker" size="large" imageMso="Numbering"
+                screentip="Tracker"
+                supertip="Adds a numbered or lettered circle. Each click adds the next one on the slide.">
+            <button id="stTrackerNumber" label="Next number (1, 2, 3...)" onAction="Rb_TrackerNumber"/>
+            <button id="stTrackerLetter" label="Next letter (A, B, C...)" onAction="Rb_TrackerLetter"/>
+            <button id="stTrackerCustom" label="Custom text..."           onAction="Rb_TrackerCustom"/>
+          </menu>
         </group>
 
         <group id="stHelp" label="Help">
