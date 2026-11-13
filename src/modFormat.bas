@@ -146,3 +146,89 @@ Private Function SlideTitle(ByVal sld As Object) As Object
 nope:
     Set SlideTitle = Nothing
 End Function
+
+' Give selected shapes the same corner rounding (in points) as the first one
+' clicked, so small and large boxes look identical.
+Public Sub ST_SameCorners()
+    On Error GoTo fail
+    Dim sr As Object, refShape As Object, radius As Single, i As Long, s As Object, shortSide As Single
+    Set sr = SelectedShapes()
+    If sr Is Nothing Then GoTo needTwo
+    If sr.Count < 2 Then GoTo needTwo
+    Set refShape = sr(1)
+    If Not HasCornerAdjustment(refShape) Then
+        Msg "The first object you clicked has no adjustable corners. Start with a rounded rectangle."
+        Exit Sub
+    End If
+    radius = refShape.Adjustments(1) * MinSide(refShape)
+    For i = 2 To sr.Count
+        Set s = sr(i)
+        If HasCornerAdjustment(s) And s.AutoShapeType = refShape.AutoShapeType Then
+            shortSide = MinSide(s)
+            If shortSide > 0 Then
+                If radius / shortSide > 0.5 Then s.Adjustments(1) = 0.5 Else s.Adjustments(1) = radius / shortSide
+            End If
+        End If
+    Next i
+    Exit Sub
+needTwo:
+    Msg "Select 2 or more rounded shapes. The first one you click sets the corners."
+    Exit Sub
+fail:
+    ReportError "Same corners"
+End Sub
+
+Private Function HasCornerAdjustment(ByVal s As Object) As Boolean
+    On Error GoTo nope
+    HasCornerAdjustment = (s.Type = 1 And s.Adjustments.Count >= 1)   ' 1 = msoAutoShape
+    Exit Function
+nope:
+    HasCornerAdjustment = False
+End Function
+
+Private Function MinSide(ByVal s As Object) As Single
+    If s.Width < s.Height Then MinSide = s.Width Else MinSide = s.Height
+End Function
+
+' Copy fill, outline, shadow and text styling (font, colour, bold, italic)
+' from the first object clicked to the others. Sizes and positions stay.
+Public Sub ST_MatchFormat()
+    On Error GoTo fail
+    Dim sr As Object, refShape As Object, i As Long, s As Object
+    Set sr = SelectedShapes()
+    If sr Is Nothing Then GoTo needTwo
+    If sr.Count < 2 Then GoTo needTwo
+    Set refShape = sr(1)
+    refShape.PickUp
+    Dim hasText As Boolean, fName As String, fColour As Long, fBold As Long, fItalic As Long
+    On Error Resume Next
+    hasText = (refShape.HasTextFrame = ST_TRUE)
+    If hasText Then
+        With refShape.TextFrame.TextRange.Characters(1, 1).Font
+            fName = .Name: fColour = .Color.RGB: fBold = .Bold: fItalic = .Italic
+        End With
+    End If
+    On Error GoTo fail
+    For i = 2 To sr.Count
+        Set s = sr(i)
+        Dim l As Single, t As Single, w As Single, h As Single
+        l = s.Left: t = s.Top: w = s.Width: h = s.Height
+        s.Apply
+        s.Left = l: s.Top = t: s.Width = w: s.Height = h
+        If hasText And Len(fName) > 0 Then
+            On Error Resume Next
+            If s.HasTextFrame = ST_TRUE Then
+                With s.TextFrame.TextRange.Font
+                    .Name = fName: .Color.RGB = fColour: .Bold = fBold: .Italic = fItalic
+                End With
+            End If
+            On Error GoTo fail
+        End If
+    Next i
+    Exit Sub
+needTwo:
+    Msg "Select 2 or more objects. The first one you click is the one to copy from."
+    Exit Sub
+fail:
+    ReportError "Match format"
+End Sub

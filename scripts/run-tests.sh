@@ -13,11 +13,17 @@ for _ in $(seq 1 30); do
   r=$(osascript -e 'with timeout of 5 seconds' -e 'tell application "Microsoft PowerPoint" to get name of every presentation' -e 'end timeout' 2>/dev/null)
   [[ "$r" == *StrategyTools-test* ]] && break
 done
-sleep 2
+# Warm up: wait until PowerPoint will actually run a macro (it reports -18
+# or times out for a while after opening a macro file).
+for _ in $(seq 1 20); do
+  w=$(osascript -e 'with timeout of 10 seconds' -e 'tell application "Microsoft PowerPoint" to run VB macro macro name "T_GetStep"' -e 'end timeout' 2>&1)
+  [[ "$w" == *"execution error"* ]] || break
+  sleep 3
+done
 for m in "$@"; do
   # PowerPoint can report error -18 for a few seconds after start-up; retry.
   for attempt in 1 2 3 4; do
-    out=$(osascript -e 'with timeout of 30 seconds' -e "tell application \"Microsoft PowerPoint\" to run VB macro macro name \"$m\"" -e 'end timeout' 2>&1)
+    out=$(osascript -e 'with timeout of 120 seconds' -e "tell application \"Microsoft PowerPoint\" to run VB macro macro name \"$m\"" -e 'end timeout' 2>&1)
     [[ "$out" == *"(-18)"* ]] || break
     sleep 4
   done

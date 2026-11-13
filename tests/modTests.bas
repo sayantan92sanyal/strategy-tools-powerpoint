@@ -451,3 +451,195 @@ fail:
     T_TrackerOverlap = "FAIL error " & Err.Description
     CloseDeck p
 End Function
+
+Public Function T_Stamps() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, r As String, i As Long
+    Set p = NewDeck(3, ppLayoutBlank)
+    ST_StampDraft
+    If TaggedShapes(p.Slides(1), "STAMP").Count <> 1 Then r = "FAIL add": GoTo done
+    ST_StampPreliminary
+    If TaggedShapes(p.Slides(1), "STAMP").Count <> 1 Then r = "FAIL relabel duplicated": GoTo done
+    If TaggedShapes(p.Slides(1), "STAMP")(1).TextFrame.TextRange.Text <> "PRELIMINARY" Then r = "FAIL relabel text": GoTo done
+    ST_StampAllSlides
+    For i = 1 To 3
+        If TaggedShapes(p.Slides(i), "STAMP").Count <> 1 Then r = "FAIL all slides " & i: GoTo done
+    Next i
+    ST_StampRemoveAll
+    For i = 1 To 3
+        If TaggedShapes(p.Slides(i), "STAMP").Count <> 0 Then r = "FAIL remove " & i: GoTo done
+    Next i
+    r = "PASS"
+done:
+    T_Stamps = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_Stamps = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_StickyFooter() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, r As String, f As Object, H As Single
+    Set p = NewDeck(2, ppLayoutTitleOnly)
+    H = p.PageSetup.SlideHeight
+    ST_StickyAdd
+    If TaggedShapes(p.Slides(1), "STICKY").Count <> 1 Then r = "FAIL sticky add " & gLastMessage: GoTo done
+    ST_StickyRemoveAll
+    If TaggedShapes(p.Slides(1), "STICKY").Count <> 0 Then r = "FAIL sticky remove": GoTo done
+    AddFooter True
+    AddFooter True
+    If TaggedShapes(p.Slides(1), "FOOTER").Count <> 1 Then r = "FAIL footer count": GoTo done
+    Set f = TaggedShapes(p.Slides(1), "FOOTER")(1)
+    If Left$(f.TextFrame.TextRange.Text, 6) <> "Note: " Then r = "FAIL footer text " & f.TextFrame.TextRange.Text: GoTo done
+    If Abs(f.Top + f.Height - H * 0.94) > 1 Then r = "FAIL footer bottom " & (f.Top + f.Height): GoTo done
+    If Abs(f.Left - p.Slides(1).Shapes.Title.Left) > 1 Then r = "FAIL footer left": GoTo done
+    ActiveWindow.View.GotoSlide 2
+    AddFooter False
+    Dim f2 As Object
+    Set f2 = TaggedShapes(p.Slides(2), "FOOTER")(1)
+    If Abs((f2.Top + f2.Height) - (f.Top + f.Height)) > 1 Or Abs(f2.Left - f.Left) > 0.5 Then r = "FAIL footer not same spot": GoTo done
+    r = "PASS"
+done:
+    T_StickyFooter = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_StickyFooter = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_Backup() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, r As String
+    Set p = NewDeck(3, ppLayoutTitleOnly)
+    ActiveWindow.View.GotoSlide 3
+    ST_BackupMark                      ' quiet: answers Yes to the appendix question
+    If p.Slides.Count <> 4 Then r = "FAIL appendix not inserted (" & p.Slides.Count & ")": GoTo done
+    If p.Slides(3).Shapes.Title.TextFrame.TextRange.Text <> "Appendix" Then r = "FAIL appendix title": GoTo done
+    If TaggedShapes(p.Slides(4), "BACKUP").Count <> 1 Then r = "FAIL label": GoTo done
+    ActiveWindow.View.GotoSlide 4
+    ST_BackupMark
+    If TaggedShapes(p.Slides(4), "BACKUP").Count <> 1 Then r = "FAIL label duplicated": GoTo done
+    ST_BackupRemove
+    If TaggedShapes(p.Slides(ActiveWindow.View.Slide.SlideIndex), "BACKUP").Count <> 0 Then r = "FAIL remove": GoTo done
+    r = "PASS"
+done:
+    T_Backup = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_Backup = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_Clean() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, r As String, path As String, cp As Object, shp As Object
+    Set p = NewDeck(2, ppLayoutTitleOnly)
+    path = Environ("TMPDIR") & "st_clean_test.pptx"
+    On Error Resume Next
+    Kill path
+    Kill Environ("TMPDIR") & "st_clean_test (client).pptx"
+    On Error GoTo fail
+    p.SaveAs path, ppSaveAsOpenXMLPresentation
+    ST_StampDraft
+    ST_StickyAdd
+    SetNotesText p.Slides(1), "speaker note"
+    If NotesText(p.Slides(1)) <> "speaker note" Then r = "FAIL could not set notes": GoTo done
+    Dim copyPath As String
+    copyPath = CleanCopy(p)
+    Set cp = ActivePresentation
+    If cp.FullName = p.FullName Then r = "FAIL copy not opened": GoTo done
+    If TaggedShapes(cp.Slides(1), "STAMP").Count <> 0 Or TaggedShapes(cp.Slides(1), "STICKY").Count <> 0 Then r = "FAIL copy not clean": GoTo done
+    If Len(NotesText(cp.Slides(1))) > 0 Then r = "FAIL notes kept": GoTo done
+    If TaggedShapes(p.Slides(1), "STAMP").Count <> 1 Then r = "FAIL original changed": GoTo done
+    r = "PASS " & copyPath
+done:
+    T_Clean = r
+    If Not cp Is Nothing Then CloseDeck cp
+    CloseDeck p
+    Exit Function
+fail:
+    T_Clean = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    If Not cp Is Nothing Then CloseDeck cp
+    CloseDeck p
+End Function
+
+Public Function T_FontsCornersMatch() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, r As String, tb As Object, body As String, a As Object, b As Object
+    Set p = NewDeck(1, ppLayoutBlank)
+    body = p.SlideMaster.Theme.ThemeFontScheme.MinorFont(1).Name
+    Set tb = p.Slides(1).Shapes.AddTextbox(ST_TEXT_HORIZONTAL, 10, 10, 200, 30)
+    tb.TextFrame.TextRange.Text = "Stray font"
+    tb.TextFrame.TextRange.Font.Name = "Courier New"
+    ST_FixFonts
+    If tb.TextFrame.TextRange.Font.Name <> body Then r = "FAIL fonts: " & tb.TextFrame.TextRange.Font.Name & " msg=" & gLastMessage: GoTo done
+    ' corners: radius 10pt on a 100x50 box carried to a 200x150 box
+    Set a = p.Slides(1).Shapes.AddShape(5, 50, 100, 100, 50)
+    a.Adjustments(1) = 0.2
+    Set b = p.Slides(1).Shapes.AddShape(5, 300, 100, 200, 150)
+    a.Select
+    b.Select ST_FALSE
+    ST_SameCorners
+    If Abs(b.Adjustments(1) * 150 - 10) > 0.5 Then r = "FAIL corners " & b.Adjustments(1): GoTo done
+    ' match format: fill + font copied, size kept
+    a.Fill.ForeColor.RGB = RGB(200, 30, 30)
+    a.TextFrame.TextRange.Text = "ref"
+    a.TextFrame.TextRange.Font.Name = "Georgia"
+    b.TextFrame.TextRange.Text = "target"
+    a.Select
+    b.Select ST_FALSE
+    ST_MatchFormat
+    If b.Fill.ForeColor.RGB <> RGB(200, 30, 30) Then r = "FAIL match fill": GoTo done
+    If b.TextFrame.TextRange.Font.Name <> "Georgia" Then r = "FAIL match font": GoTo done
+    If Abs(b.Width - 200) > 0.5 Or Abs(b.Height - 150) > 0.5 Then r = "FAIL match changed size": GoTo done
+    r = "PASS"
+done:
+    T_FontsCornersMatch = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_FontsCornersMatch = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_GetStep() As String
+    T_GetStep = gLastMessage
+End Function
+
+Public Function T_CleanSteps() As String
+    gQuiet = True
+    Dim p As Object, path As String
+    gLastMessage = "1 new deck"
+    Set p = NewDeck(1, ppLayoutTitleOnly)
+    path = Environ("TMPDIR") & "st_step.pptx"
+    gLastMessage = "2 saveas"
+    p.SaveAs path, ppSaveAsOpenXMLPresentation
+    gLastMessage = "3 stamp"
+    ST_StampDraft
+    gLastMessage = "4 sticky"
+    ST_StickyAdd
+    gLastMessage = "5 notes"
+    SetNotesText p.Slides(1), "speaker note"
+    gLastMessage = "6 savecopyas"
+    p.SaveCopyAs Environ("TMPDIR") & "st_step (client).pptx"
+    gLastMessage = "7 open copy"
+    Dim cp As Object
+    Set cp = Presentations.Open(Environ("TMPDIR") & "st_step (client).pptx")
+    gLastMessage = "8 clean"
+    CleanDeck cp
+    gLastMessage = "9 save copy"
+    cp.Save
+    gLastMessage = "10 done"
+    CloseDeck cp
+    CloseDeck p
+    T_CleanSteps = "done"
+End Function

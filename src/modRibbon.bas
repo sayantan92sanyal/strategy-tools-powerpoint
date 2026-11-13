@@ -31,5 +31,23 @@ Public Sub Rb_TrackerNumber(control As Object): ST_TrackerNumber:   End Sub
 Public Sub Rb_TrackerLetter(control As Object): ST_TrackerLetter:   End Sub
 Public Sub Rb_TrackerCustom(control As Object): ST_TrackerCustom:   End Sub
 
+Public Sub Rb_SameCorners(control As Object):       ST_SameCorners:       End Sub
+Public Sub Rb_MatchFormat(control As Object):       ST_MatchFormat:       End Sub
+Public Sub Rb_StampDraft(control As Object):        ST_StampDraft:        End Sub
+Public Sub Rb_StampPreliminary(control As Object):  ST_StampPreliminary:  End Sub
+Public Sub Rb_StampDiscussion(control As Object):   ST_StampDiscussion:   End Sub
+Public Sub Rb_StampConfidential(control As Object): ST_StampConfidential: End Sub
+Public Sub Rb_StampCustom(control As Object):       ST_StampCustom:       End Sub
+Public Sub Rb_StampAll(control As Object):          ST_StampAllSlides:    End Sub
+Public Sub Rb_StampRemove(control As Object):       ST_StampRemoveAll:    End Sub
+Public Sub Rb_StickyAdd(control As Object):         ST_StickyAdd:         End Sub
+Public Sub Rb_StickyRemove(control As Object):      ST_StickyRemoveAll:   End Sub
+Public Sub Rb_FooterSource(control As Object):      ST_FooterSource:      End Sub
+Public Sub Rb_FooterSourceNote(control As Object):  ST_FooterSourceNote:  End Sub
+Public Sub Rb_BackupMark(control As Object):        ST_BackupMark:        End Sub
+Public Sub Rb_BackupRemove(control As Object):      ST_BackupRemove:      End Sub
+Public Sub Rb_CleanForSending(control As Object):   ST_CleanForSending:   End Sub
+Public Sub Rb_FixFonts(control As Object):          ST_FixFonts:          End Sub
+
 Public Sub Rb_TextBox(control As Object):       ST_AddTextBox:      End Sub
 Public Sub Rb_Shortcuts(control As Object):     ST_ShowShortcuts:   End Sub

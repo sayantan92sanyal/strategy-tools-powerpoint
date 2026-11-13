@@ -16,6 +16,8 @@ Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later).
 | **Same Width** | As above, width only. |
 | **Same Height** | As above, height only. |
 | **Title Harmonizer** | Click into a slide title. Every other slide's title gets the same font and font size. Slides with a *Title Slide* layout are skipped. |
+| **Same Corners** | Select 2+ rounded shapes. All get the first one's corner rounding (in points), so small and large boxes look identical. |
+| **Match Format** | Select 2+ objects. Fill, outline, shadow, font and text colour are copied from the first one clicked. Sizes and positions stay. |
 
 ### Visuals
 | Button | How to use it |
@@ -27,6 +29,16 @@ Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later).
 | **Tracker ▾** | **Next number** / **Next letter** adds a small solid circle with the next number (1, 2, 3…) or letter (A, B, C…) on the slide. **Custom…** lets you type up to 3 characters. New trackers never land on top of existing ones. |
 
 Harvey balls, meters, chevrons and trackers use the template's main accent colour (Accent 1), so they match whichever client template you're in. Status icons use fixed traffic-light colours, so status reads the same everywhere.
+
+### Review
+| Button | How to use it |
+|---|---|
+| **Stamp ▾** | Draft / Preliminary / For discussion / Confidential / Custom, as a red box in the top-right corner of the selected slides. Picking another stamp re-labels it. Also: copy this slide's stamp to all slides, remove all stamps. |
+| **Sticky Note ▾** | Adds a yellow reviewer note with your initials. *Remove all sticky notes* clears them from the deck. |
+| **Source ▾** | Adds a "Source:" (or "Note:" + "Source:") footer at the bottom left, in exactly the same spot on every slide. If the slide already has one, it's selected instead. |
+| **Back-up ▾** | Marks the selected slides with a grey BACK-UP tag and offers to insert an "Appendix" divider in front of them. |
+| **Clean for Sending** | Saves "*name* (client).pptx" next to the deck with no stamps, sticky notes, speaker notes or comments, and opens it. The original is not changed. The deck must be saved first. |
+| **Fix Fonts** | Lists fonts that aren't the template's heading/body fonts and, after asking, replaces them everywhere (slides, notes, masters). Symbol fonts are left alone. |
 
 ### Keyboard shortcuts
 | Keys | Action |
@@ -76,6 +88,7 @@ src/
   modStatus.bas        status icons
   modChevrons.bas      phase chevrons + detail boxes
   modTrackers.bas      numbered / lettered trackers
+  modReview.bas        stamps, sticky notes, source footer, back-up, clean, fonts
   modHelp.bas          Ctrl+Q text box, cheat sheet
   modRibbon.bas        ribbon button callbacks
   customUI14.xml       ribbon tab layout
@@ -106,7 +119,8 @@ python3 scripts/build.py
 
 # Run tests inside PowerPoint (WARNING: quits PowerPoint without saving)
 scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow \
-  T_Status T_Chevrons T_Trackers T_TrackerOverlap
+  T_Status T_Chevrons T_Trackers T_TrackerOverlap \
+  T_Stamps T_StickyFooter T_Backup T_Clean T_FontsCornersMatch
 ```
 
 Each test prints `PASS` or `FAIL …`. `T_Render` and `T_Render2` also export a slide with every visual to a PNG so you can check how they look.
@@ -116,6 +130,7 @@ To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In s
 **Gotchas**
 - The Office type library isn't referenced. Use numbers or the `ST_` constants in `modCommon.bas` instead of `msoTrue`, `msoShapeOval` and the like. PowerPoint constants (`ppLayoutBlank`…) are fine.
 - Module-level `Dim`/`Public`/`Const` lines must come before the first procedure, or the whole add-in fails to compile.
+- Never put a loop inside `On Error Resume Next` (it can spin forever), and don't call `Application.PathSeparator` (it hangs on Mac). See docs/adding-a-feature.md.
 - Don't use VBA keywords as variable names (`circle`, `line`…), and never start a line with a bare call followed by `:` (`ST_Foo: ST_Foo`), because VBA reads it as a label.
 - If PowerPoint stops responding to scripted tests, quit it fully (Cmd+Q) and run again.
 

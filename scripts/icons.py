@@ -153,6 +153,61 @@ def tracker(kind):
     return render([(circle(C, C, R), BLUE), (lambda x, y: any(g(x, y) for g in glyphs), WHITE)])
 
 
+STAMP_RED = (198, 40, 40)
+YELLOW = (255, 220, 90)
+YELLOW_EDGE = (214, 178, 40)
+INK = (110, 118, 132)
+
+
+def outline(x0, y0, x1, y1, w):
+    """Rectangle outline of stroke width w."""
+    outer, inner = rect(x0, y0, x1, y1), rect(x0 + w, y0 + w, x1 - w, y1 - w)
+    return lambda x, y: outer(x, y) and not inner(x, y)
+
+
+def any_of(*fns):
+    return lambda x, y: any(f(x, y) for f in fns)
+
+
+def page(extra):
+    """A page outline with extra marks drawn on it."""
+    return render([(rect(12, 6, 52, 58), WHITE), (outline(12, 6, 52, 58, 3), INK)] + extra)
+
+
+def misc_icons():
+    icons = {}
+    icons["stStamp"] = render([(outline(6, 18, 58, 46, 4), STAMP_RED),
+                               (rect(14, 28, 50, 31.5), STAMP_RED), (rect(14, 34.5, 40, 38), STAMP_RED)])
+    icons["stSticky"] = render([(lambda x, y: rect(8, 8, 56, 56)(x, y) and x + y < 98, YELLOW),
+                                (lambda x, y: 42 <= x <= 56 and 42 <= y <= 56 and x + y >= 98 and x + y <= 100, YELLOW_EDGE),
+                                (rect(16, 20, 46, 23.5), INK), (rect(16, 29, 40, 32.5), INK)])
+    icons["stFooter"] = page([(rect(18, 44, 46, 46.5), INK), (rect(18, 50, 38, 52.5), INK),
+                              (rect(18, 14, 46, 34), (225, 230, 236))])
+    icons["stBackup"] = render([(lambda x, y: rect(6, 20, 50, 44)(x, y) and (x < 48 or abs(y - 32) < 58 - x), INK),
+                                (circle(46, 32, 3.2), WHITE),
+                                (rect(12, 29, 36, 35), WHITE)])
+    icons["stClean"] = page([(polyline([(21, 33), (29, 41), (44, 24)], 6), GREEN)])
+    icons["stFonts"] = render([(stroke(10, 54, 24, 12, 6), BLUE), (stroke(24, 12, 38, 54, 6), BLUE),
+                               (stroke(15, 40, 33, 40, 5), BLUE),
+                               (circle(48, 46, 8), BLUE), (circle(48, 46, 3.5), WHITE), (rect(53, 36, 57, 54), BLUE)])
+    icons["stCorners"] = render([(lambda x, y: _round_rect(x, y, 8, 14, 56, 50, 12, 4), BLUE)])
+    icons["stMatch"] = render([(rect(6, 10, 30, 34), BLUE), (outline(34, 30, 58, 54, 3.5), BLUE),
+                               (stroke(22, 44, 36, 20, 3.5), INK),
+                               (polyline([(29, 21), (36, 20), (36, 27)], 3.5), INK)])
+    return icons
+
+
+def _round_rect(x, y, x0, y0, x1, y1, r, w):
+    """Outline of a rounded rectangle, corner radius r, stroke width w."""
+    def inside(px, py, rr, a0, b0, a1, b1):
+        if not (a0 <= px <= a1 and b0 <= py <= b1):
+            return False
+        cx = min(max(px, a0 + rr), a1 - rr)
+        cy = min(max(py, b0 + rr), b1 - rr)
+        return (px - cx) ** 2 + (py - cy) ** 2 <= rr * rr
+    return inside(x, y, r, x0, y0, x1, y1) and not inside(x, y, max(r - w, 0.1), x0 + w, y0 + w, x1 - w, y1 - w)
+
+
 def all_icons():
     """name -> PNG bytes. Names are used as image="..." in customUI14.xml."""
     icons = {}
@@ -165,6 +220,7 @@ def all_icons():
         icons[f"stStatus{name}"] = status(kind)
     for kind, name in (("number", "Number"), ("letter", "Letter"), ("custom", "Custom")):
         icons[f"stTracker{name}"] = tracker(kind)
+    icons.update(misc_icons())
     return icons
 
 

@@ -22,6 +22,12 @@
           <button id="stTitle" label="Title Harmonizer" size="large" imageMso="FormatPainter"
                   onAction="Rb_TitleHarmonizer" screentip="Title Harmonizer"
                   supertip="Click into a slide title. Every other slide's title gets the same font and size (Title Slide layouts are skipped)."/>
+          <button id="stCorners" label="Same Corners" image="stCorners"
+                  onAction="Rb_SameCorners" screentip="Same corner rounding"
+                  supertip="Select 2+ rounded shapes. All get the corner rounding of the first one you clicked, whatever their size."/>
+          <button id="stMatch" label="Match Format" image="stMatch"
+                  onAction="Rb_MatchFormat" screentip="Match format"
+                  supertip="Select 2+ objects. Fill, outline, shadow and font of the first one you clicked are copied to the others."/>
         </group>
 
         <group id="stVisuals" label="Visuals">
@@ -59,6 +65,45 @@
             <button id="stTrackerLetter" image="stTrackerLetter" label="Next letter (A, B, C...)" onAction="Rb_TrackerLetter"/>
             <button id="stTrackerCustom" image="stTrackerCustom" label="Custom text..."           onAction="Rb_TrackerCustom"/>
           </menu>
+        </group>
+
+        <group id="stReview" label="Review">
+          <menu id="stStampMenu" label="Stamp" size="large" image="stStamp" itemSize="large"
+                screentip="Status stamp"
+                supertip="Adds a stamp in the top-right corner of the selected slides. Picking another stamp re-labels it.">
+            <button id="stStampDraft"        label="Draft"          onAction="Rb_StampDraft"/>
+            <button id="stStampPrelim"       label="Preliminary"    onAction="Rb_StampPreliminary"/>
+            <button id="stStampDiscussion"   label="For discussion" onAction="Rb_StampDiscussion"/>
+            <button id="stStampConfidential" label="Confidential"   onAction="Rb_StampConfidential"/>
+            <button id="stStampCustom"       label="Custom text..." onAction="Rb_StampCustom"/>
+            <menuSeparator id="stStampSep"/>
+            <button id="stStampAll"          label="Copy this slide's stamp to all slides" onAction="Rb_StampAll"/>
+            <button id="stStampRemove"       label="Remove all stamps"  onAction="Rb_StampRemove"/>
+          </menu>
+          <menu id="stStickyMenu" label="Sticky Note" size="large" image="stSticky" itemSize="large"
+                screentip="Sticky note"
+                supertip="Yellow reviewer notes. Remove them all in one click before sending.">
+            <button id="stStickyAdd"    label="Add sticky note"         onAction="Rb_StickyAdd"/>
+            <button id="stStickyRemove" label="Remove all sticky notes" onAction="Rb_StickyRemove"/>
+          </menu>
+          <menu id="stFooterMenu" label="Source" size="large" image="stFooter" itemSize="large"
+                screentip="Source &amp; note footer"
+                supertip="Adds a Source (and optional Note) line at the bottom left, in the same spot on every slide.">
+            <button id="stFooterSource" label="Source"        onAction="Rb_FooterSource"/>
+            <button id="stFooterNote"   label="Note + Source" onAction="Rb_FooterSourceNote"/>
+          </menu>
+          <menu id="stBackupMenu" label="Back-up" size="large" image="stBackup" itemSize="large"
+                screentip="Back-up label"
+                supertip="Marks the selected slides as back-up, with an optional Appendix divider.">
+            <button id="stBackupMark"   label="Mark as back-up"     onAction="Rb_BackupMark"/>
+            <button id="stBackupRemove" label="Remove back-up label" onAction="Rb_BackupRemove"/>
+          </menu>
+          <button id="stClean" label="Clean for Sending" size="large" image="stClean"
+                  onAction="Rb_CleanForSending" screentip="Clean for sending"
+                  supertip="Saves a copy next to this deck without stamps, sticky notes, speaker notes or comments. This deck is not changed."/>
+          <button id="stFonts" label="Fix Fonts" size="large" image="stFonts"
+                  onAction="Rb_FixFonts" screentip="Fix fonts"
+                  supertip="Finds fonts that aren't the template's and, after asking, replaces them everywhere."/>
         </group>
 
         <group id="stHelp" label="Help">

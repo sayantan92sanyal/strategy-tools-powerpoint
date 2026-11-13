@@ -23,6 +23,9 @@ Everything is plain text in `src/`. The build script turns it into the add-in, s
 1. **Write the macro** as `Public Sub ST_YourFeature()` in the module that fits (or a new `src/modSomething.bas` whose first line is `Attribute VB_Name = "modSomething"`). Use `SelectedShapes()` and `Msg` from `modCommon`.
    - The Office type library isn't referenced, so use numbers (or add a `Public Const ST_...` to `modCommon`) instead of `msoTrue`, `msoShapeOval` and similar. PowerPoint constants such as `ppLayoutBlank` are fine.
    - Module-level `Dim`/`Public`/`Const` lines must come before the first Sub/Function.
+   - Never put a loop inside `On Error Resume Next`: if the loop header fails, VBA can spin forever and PowerPoint hangs. Wrap the risky call in a small function with `On Error GoTo` instead (see `NotesBody` in `modReview.bas`).
+   - Avoid `Application.PathSeparator`: on Mac PowerPoint it hangs. Paths always use `/`.
+   - Debugging a hang: call `Trace "step"` (in `modCommon`). During tests it appends to `st_trace.log` in PowerPoint's temp folder (`~/Library/Containers/com.microsoft.Powerpoint/Data/tmp/`).
 2. **Add a ribbon callback** in `src/modRibbon.bas`:
    `Public Sub Rb_YourFeature(control As Object): ST_YourFeature: End Sub`
 3. **Add a button** in `src/customUI14.xml` inside the right `<group>`:

@@ -34,11 +34,18 @@ The first time you press **Ctrl+Q**, macOS asks whether it can control PowerPoin
 | **Swap** | Select exactly 2 objects. They trade places. |
 | **Same Size / Same Width / Same Height** | Select 2+ objects. All match the **first object you clicked**. |
 | **Title Harmonizer** | Click into a slide title. All other slide titles get its font and size (title slides are skipped). |
+| **Same Corners / Match Format** | Match corner rounding, or copy fill, outline and font, from the first object you clicked. |
 | **Harvey Ball ▾** | Adds a 0/25/50/75/100% Harvey ball. Select existing balls first to change their level. |
 | **Meter ▾** | Adds a Low/Medium/High 3-bar meter. Select existing meters first to change them. |
 | **Status ▾** | Complete / In progress / Delayed / Not started icons. Select existing icons first to change them. |
 | **Chevrons** | Asks how many, then adds a row of phase chevrons with a detail text box under each. |
 | **Tracker ▾** | Adds the next numbered (1, 2, 3…) or lettered (A, B, C…) circle, or your own short text. |
+| **Stamp ▾** | Draft / Preliminary / For discussion / Confidential stamp in the top-right corner. |
+| **Sticky Note ▾** | Yellow reviewer notes; remove them all in one click. |
+| **Source ▾** | Source (and Note) footer in the same spot on every slide. |
+| **Back-up ▾** | Tags slides as back-up, with an optional Appendix divider. |
+| **Clean for Sending** | Saves a client copy without stamps, sticky notes, speaker notes or comments. |
+| **Fix Fonts** | Replaces non-template fonts across the deck (asks first). |
 | **Ctrl+Q** | New text box in the middle of the slide, ready to type. |
 | **Ctrl+Cmd+← → ↑ ↓** | Align selected objects left / right / top / bottom (one object aligns to the slide). |
 | **Shift+Cmd+O** or **Shortcuts** button | Opens the shortcuts cheat sheet. |

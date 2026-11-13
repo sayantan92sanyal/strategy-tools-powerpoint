@@ -124,3 +124,77 @@ Public Function SelectedVisuals(ByVal kind As String) As Collection
     End If
     Set SelectedVisuals = result
 End Function
+
+' Slides to act on: the slides selected in the thumbnail pane, or else the
+' slide being edited. Empty when no slide is available.
+Public Function TargetSlides() As Collection
+    Dim c As New Collection, s As Object, rng As Object
+    Set rng = SelectedSlideRange()
+    If Not rng Is Nothing Then
+        For Each s In rng
+            c.Add s
+        Next s
+    End If
+    If c.Count = 0 Then
+        If HasEditableSlide() Then c.Add CurrentSlide()
+    End If
+    Set TargetSlides = c
+End Function
+
+Private Function SelectedSlideRange() As Object
+    On Error GoTo none
+    If ActiveWindow.Selection.Type = ppSelectionSlides Then Set SelectedSlideRange = ActiveWindow.Selection.SlideRange
+none:
+End Function
+
+' Yes/No question. Tests (gQuiet) always answer Yes.
+Public Function Confirm(ByVal text As String) As Boolean
+    gLastMessage = text
+    If gQuiet Then
+        Confirm = True
+    Else
+        Confirm = (MsgBox(text, vbYesNo + vbQuestion, ST_APP_TITLE) = vbYes)
+    End If
+End Function
+
+' Shapes on a slide carrying ST_TYPE = kind (top level only).
+Public Function TaggedShapes(ByVal sld As Object, ByVal kind As String) As Collection
+    Dim c As New Collection, shp As Object
+    For Each shp In sld.Shapes
+        If TagOf(shp, "ST_TYPE") = kind Then c.Add shp
+    Next shp
+    Set TaggedShapes = c
+End Function
+
+' Left edge used by consulting elements: the master title's left, else 4%.
+Public Function ContentLeft() As Single
+    Dim shp As Object
+    Dim i As Long, n As Long
+    On Error GoTo done
+    ContentLeft = ActivePresentation.PageSetup.SlideWidth * 0.04
+    n = ActivePresentation.SlideMaster.Shapes.Count
+    For i = 1 To n
+        Set shp = ActivePresentation.SlideMaster.Shapes(i)
+        If IsPlaceholderOf(shp, ppPlaceholderTitle) Then ContentLeft = shp.Left: Exit For
+    Next i
+done:
+End Function
+
+' Test-only trace: appends a line to st_trace.log in PowerPoint's temp folder
+' when running under tests (gQuiet). Does nothing for normal use.
+Public Sub Trace(ByVal text As String)
+    If Not gQuiet Then Exit Sub
+    Dim f As Integer
+    On Error Resume Next
+    f = FreeFile
+    Open Environ("TMPDIR") & "st_trace.log" For Append As #f
+    Print #f, Format(Now, "hh:nn:ss") & " " & text
+    Close #f
+End Sub
+
+Public Function IsPlaceholderOf(ByVal shp As Object, ByVal kind As Long) As Boolean
+    On Error GoTo nope
+    If shp.Type <> ST_TYPE_PLACEHOLDER Then Exit Function
+    IsPlaceholderOf = (shp.PlaceholderFormat.Type = kind)
+nope:
+End Function
