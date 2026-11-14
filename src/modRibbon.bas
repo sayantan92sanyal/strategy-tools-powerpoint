@@ -56,5 +56,15 @@ Public Sub Rb_AgendaUpdate(control As Object):     ST_AgendaUpdate:      End Sub
 Public Sub Rb_Storyline(control As Object):        ST_Storyline:         End Sub
 Public Sub Rb_DeckCheck(control As Object):        ST_DeckCheck:         End Sub
 
+Public Sub Rb_Matrix(control As Object):           ST_Matrix:            End Sub
+Public Sub Rb_ProcessFlow(control As Object):      ST_ProcessFlow:       End Sub
+Public Sub Rb_Takeaways(control As Object):        ST_Takeaways:         End Sub
+Public Sub Rb_Cagr(control As Object):             ST_Cagr:              End Sub
+
+' Rating menu: the button's tag holds the score (1-5).
+Public Sub Rb_Rating(control As Object)
+    RatingScale CLng(control.Tag)
+End Sub
+
 Public Sub Rb_TextBox(control As Object):       ST_AddTextBox:      End Sub
 Public Sub Rb_Shortcuts(control As Object):     ST_ShowShortcuts:   End Sub

@@ -208,6 +208,19 @@ def misc_icons():
     lens = lambda x, y: 9 ** 2 <= (x - 26) ** 2 + (y - 26) ** 2 <= 15 ** 2
     icons["stDeckCheck"] = render([(circle(26, 26, 12), (232, 240, 250)), (lens, BLUE), (stroke(37, 37, 54, 54, 7), BLUE),
                                    (polyline([(20, 26), (25, 31), (33, 21)], 4), GREEN)])
+    icons["stMatrix"] = render([(rect(14, 6, 35, 27), GREY), (rect(38, 6, 59, 27), BLUE), (rect(14, 30, 35, 51), GREY),
+                                (rect(38, 30, 59, 51), GREY), (stroke(8, 57, 60, 57, 3.5), INK), (stroke(8, 57, 8, 4, 3.5), INK)])
+    icons["stProcess"] = render([(stroke(10, 32, 54, 32, 4), GREY)] +
+                                [(circle(cx, 32, 8.5), BLUE) for cx in (10, 32, 54)])
+    icons["stTakeaway"] = render([(rect(6, 8, 30, 56), (225, 230, 236)), (rect(34, 8, 58, 18), BLUE), (rect(34, 18, 58, 56), (220, 232, 248)),
+                                  (circle(39, 27, 2.2), BLUE), (rect(43, 25.5, 55, 28.5), INK),
+                                  (circle(39, 37, 2.2), BLUE), (rect(43, 35.5, 53, 38.5), INK),
+                                  (circle(39, 47, 2.2), BLUE), (rect(43, 45.5, 54, 48.5), INK)])
+    for k in range(1, 6):
+        icons[f"stRating{k}"] = render([(circle(7 + i * 12.5, 32, 5.5), BLUE if i < k else GREY) for i in range(5)])
+    icons["stCagr"] = render([(rect(8, 40, 20, 58), BLUE), (rect(26, 32, 38, 58), BLUE), (rect(44, 22, 56, 58), BLUE),
+                              (polyline([(14, 34), (14, 8), (50, 8), (50, 14)], 3), INK),
+                              (lambda x, y: y >= 13 and abs(x - 50) <= (20 - y) * 0.8 and y <= 20, INK)])
     return icons
 
 

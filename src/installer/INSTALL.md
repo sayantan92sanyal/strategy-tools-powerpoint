@@ -40,6 +40,10 @@ The first time you press **Ctrl+Q**, macOS asks whether it can control PowerPoin
 | **Status ▾** | Complete / In progress / Delayed / Not started icons. Select existing icons first to change them. |
 | **Chevrons** | Asks how many, then adds a row of phase chevrons with a detail text box under each. |
 | **Tracker ▾** | Adds the next numbered (1, 2, 3…) or lettered (A, B, C…) circle, or your own short text. |
+| **2x2 Matrix / Process Flow** | One-click 2×2 matrix, or numbered process steps (asks how many). |
+| **Key Takeaways** | Right-hand panel with a "Key takeaways" header and bullets. |
+| **Rating ▾** | 1–5 dot rating, updatable in place. |
+| **CAGR Arrow** | Arrow between two bars labelled with the yearly growth rate. |
 | **Agenda ▾** | Agenda slide you type section names into, highlighted dividers before each section, optional section tags, and Update. |
 | **Storyline** | Adds a slide listing every slide title, grouped by section. |
 | **Deck Check** | Adds a slide listing formatting problems by slide number. |

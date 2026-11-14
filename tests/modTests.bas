@@ -802,3 +802,104 @@ fail:
     T_Render3 = "FAIL error " & Err.Description
     CloseDeck p
 End Function
+
+Private Function InsideSlide(ByVal shp As Object, ByVal p As Object) As Boolean
+    InsideSlide = shp.Left >= -1 And shp.Top >= -1 And shp.Left + shp.Width <= p.PageSetup.SlideWidth + 1 _
+                  And shp.Top + shp.Height <= p.PageSetup.SlideHeight + 1
+End Function
+
+Public Function T_Frameworks() As String
+    On Error GoTo fail
+    gQuiet = True
+    gLastMessage = ""
+    Dim p As Object, r As String, g As Object, a As Object, b As Object, sld As Object
+    Set p = TitledDeck(5)
+    ' matrix
+    ActiveWindow.View.GotoSlide 1
+    Set g = AddMatrix()
+    If g.Tags("ST_TYPE") <> "MATRIX" Or g.GroupItems.Count <> 8 Then r = "FAIL matrix parts " & g.GroupItems.Count: GoTo done
+    If Not InsideSlide(g, p) Then r = "FAIL matrix off slide": GoTo done
+    If g.Top < p.Slides(1).Shapes.Title.Top + p.Slides(1).Shapes.Title.Height Then r = "FAIL matrix over title": GoTo done
+    ' process
+    ActiveWindow.View.GotoSlide 2
+    Set g = AddProcess(4)
+    If g.GroupItems.Count <> 9 Then r = "FAIL process parts " & g.GroupItems.Count: GoTo done
+    If Not InsideSlide(g, p) Then r = "FAIL process off slide": GoTo done
+    If AddProcess(9) Is Nothing = False Then r = "FAIL process range": GoTo done
+    ' takeaways (second call selects instead of duplicating)
+    ActiveWindow.View.GotoSlide 3
+    Set g = AddTakeaways()
+    AddTakeaways
+    If TaggedShapes(p.Slides(3), "TAKEAWAY").Count <> 1 Then r = "FAIL takeaway duplicated": GoTo done
+    If g.Left < p.PageSetup.SlideWidth / 2 Or Not InsideSlide(g, p) Then r = "FAIL takeaway position": GoTo done
+    ' rating: add, then update in place
+    ActiveWindow.View.GotoSlide 4
+    Set sld = p.Slides(4)
+    ActiveWindow.Selection.Unselect
+    ST_Rating3
+    Set g = TaggedShapes(sld, "RATING")(1)
+    If g.Tags("ST_LEVEL") <> "3" Then r = "FAIL rating level": GoTo done
+    g.Select
+    ST_Rating5
+    If TaggedShapes(sld, "RATING").Count <> 1 Or TaggedShapes(sld, "RATING")(1).Tags("ST_LEVEL") <> "5" Then r = "FAIL rating update": GoTo done
+    ' CAGR between two bars: 100 -> 200 over 3 years = +26% p.a.
+    ActiveWindow.View.GotoSlide 5
+    Set a = p.Slides(5).Shapes.AddShape(ST_SHAPE_RECTANGLE, 400, 300, 40, 100)
+    Set b = p.Slides(5).Shapes.AddShape(ST_SHAPE_RECTANGLE, 150, 250, 40, 150)
+    a.Select
+    b.Select ST_FALSE
+    Set g = AddCagr(100, 200, 3)
+    If g.Tags("ST_TEXT") <> "+26% p.a." Then r = "FAIL cagr label " & g.Tags("ST_TEXT"): GoTo done
+    If Abs(g.Left - 170) > 3 Or Abs(g.Left + g.Width - 420) > 3 Then r = "FAIL cagr span " & g.Left & "-" & (g.Left + g.Width): GoTo done
+    If CagrLabel(100, 103, 1) <> "+3.0% p.a." Or CagrLabel(200, 100, 2) <> "-29% p.a." Then r = "FAIL cagr format " & CagrLabel(200, 100, 2): GoTo done
+    ActiveWindow.Selection.Unselect
+    If AddCagr(100, 150, 2) Is Nothing Then r = "FAIL cagr no selection": GoTo done
+    If Not (AddCagr(0, 150, 2) Is Nothing) Then r = "FAIL cagr zero accepted": GoTo done
+    r = "PASS"
+done:
+    T_Frameworks = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_Frameworks = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_Render4() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, d As String, a As Object, b As Object, i As Long
+    Set p = TitledDeck(3)
+    p.Slides(1).Shapes.Title.TextFrame.TextRange.Text = "Prioritising initiatives by impact and ease"
+    p.Slides(2).Shapes.Title.TextFrame.TextRange.Text = "Four-step approach to the transformation"
+    p.Slides(3).Shapes.Title.TextFrame.TextRange.Text = "Revenue grew strongly while the market stalled"
+    ActiveWindow.View.GotoSlide 1
+    AddMatrix
+    ActiveWindow.View.GotoSlide 2
+    AddProcess 4
+    ActiveWindow.View.GotoSlide 3
+    For i = 0 To 3
+        Set a = p.Slides(3).Shapes.AddShape(ST_SHAPE_RECTANGLE, 80 + i * 110, 470 - (150 + i * 50), 60, 150 + i * 50)
+        a.Fill.ForeColor.ObjectThemeColor = ST_THEME_ACCENT1
+        If i = 0 Then Set b = a
+    Next i
+    b.Select
+    a.Select ST_FALSE
+    AddCagr 150, 300, 3
+    AddTakeaways
+    ActiveWindow.Selection.Unselect
+    ST_Rating4
+    With TaggedShapes(p.Slides(3), "RATING")(1)
+        .Left = 120: .Top = 490
+    End With
+    d = Environ("TMPDIR")
+    For i = 1 To 3
+        p.Slides(i).Export d & "st_r4_" & i & ".png", "PNG", 1280, 720
+    Next i
+    T_Render4 = "PASS"
+    CloseDeck p
+    Exit Function
+fail:
+    T_Render4 = "FAIL error " & Err.Description
+    CloseDeck p
+End Function

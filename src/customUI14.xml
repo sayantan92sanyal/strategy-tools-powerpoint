@@ -67,6 +67,30 @@
           </menu>
         </group>
 
+        <group id="stFrameworks" label="Frameworks">
+          <button id="stMatrix" label="2x2 Matrix" size="large" image="stMatrix"
+                  onAction="Rb_Matrix" screentip="2x2 matrix"
+                  supertip="Four shaded quadrants with editable titles and axis labels, filling the slide body."/>
+          <button id="stProcess" label="Process Flow" size="large" image="stProcess"
+                  onAction="Rb_ProcessFlow" screentip="Process flow"
+                  supertip="Asks how many steps, then adds numbered circles on a line with a name and description under each."/>
+          <button id="stTakeaway" label="Key Takeaways" size="large" image="stTakeaway"
+                  onAction="Rb_Takeaways" screentip="Key takeaways panel"
+                  supertip="A panel on the right of the slide with a Key takeaways header and a bulleted list."/>
+          <menu id="stRatingMenu" label="Rating" size="large" image="stRating3" itemSize="large"
+                screentip="Rating scale"
+                supertip="One to five filled dots. Select existing ratings first to change their score.">
+            <button id="stRating1" label="1 of 5" image="stRating1" onAction="Rb_Rating" tag="1"/>
+            <button id="stRating2" label="2 of 5" image="stRating2" onAction="Rb_Rating" tag="2"/>
+            <button id="stRating3" label="3 of 5" image="stRating3" onAction="Rb_Rating" tag="3"/>
+            <button id="stRating4" label="4 of 5" image="stRating4" onAction="Rb_Rating" tag="4"/>
+            <button id="stRating5" label="5 of 5" image="stRating5" onAction="Rb_Rating" tag="5"/>
+          </menu>
+          <button id="stCagr" label="CAGR Arrow" size="large" image="stCagr"
+                  onAction="Rb_Cagr" screentip="CAGR arrow"
+                  supertip="Select the first and last bar (or nothing), enter start value, end value and years. Adds an arrow with the growth rate per year."/>
+        </group>
+
         <group id="stStory" label="Storyline">
           <menu id="stAgendaMenu" label="Agenda" size="large" image="stAgenda" itemSize="large"
                 screentip="Agenda and dividers"

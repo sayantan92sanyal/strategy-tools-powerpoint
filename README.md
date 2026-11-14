@@ -30,6 +30,15 @@ Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later).
 
 Harvey balls, meters, chevrons and trackers use the template's main accent colour (Accent 1), so they match whichever client template you're in. Status icons use fixed traffic-light colours, so status reads the same everywhere.
 
+### Frameworks
+| Button | How to use it |
+|---|---|
+| **2x2 Matrix** | Four shaded quadrants with editable titles, axes with arrows and editable axis labels, filling the slide body under the title. |
+| **Process Flow** | Asks how many steps (2–7), then adds numbered circles on a connecting line with a step name and description under each. |
+| **Key Takeaways** | A panel on the right of the slide: accent "Key takeaways" header with a bulleted list below. If the slide already has one, it's selected instead. |
+| **Rating ▾** | One to five filled dots. Select existing ratings and pick a score to update them in place. |
+| **CAGR Arrow** | Select the first and last bar (or nothing), then enter start value, end value and years. Adds an elbow arrow with the growth rate per year (e.g. "+26% p.a."). Without two shapes selected it lands mid-slide to drag into place. |
+
 ### Storyline
 | Button | How to use it |
 |---|---|
@@ -100,6 +109,7 @@ src/
   modTrackers.bas      numbered / lettered trackers
   modReview.bas        stamps, sticky notes, source footer, back-up, clean, fonts
   modStoryline.bas     agenda + dividers, section tags, storyline, deck check
+  modFrameworks.bas    2x2 matrix, process flow, key takeaways, rating, CAGR arrow
   modHelp.bas          Ctrl+Q text box, cheat sheet
   modRibbon.bas        ribbon button callbacks
   customUI14.xml       ribbon tab layout
@@ -132,10 +142,10 @@ python3 scripts/build.py
 scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow \
   T_Status T_Chevrons T_Trackers T_TrackerOverlap \
   T_Stamps T_StickyFooter T_Backup T_Clean T_FontsCornersMatch \
-  T_Agenda T_StorylineCheck
+  T_Agenda T_StorylineCheck T_Frameworks
 ```
 
-Each test prints `PASS` or `FAIL …`. `T_Render`, `T_Render2` and `T_Render3` also export a slide with every visual to a PNG so you can check how they look.
+Each test prints `PASS` or `FAIL …`. `T_Render` to `T_Render4` also export a slide with every visual to a PNG so you can check how they look.
 
 To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In short: write `Public Sub ST_YourFeature()` in a module, add a `Rb_` callback in `modRibbon.bas`, add a `<button>` to `customUI14.xml` and rebuild.
 
