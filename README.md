@@ -1,8 +1,15 @@
 # Strategy Tools: PowerPoint Add-in for Mac
 
-A PowerPoint add-in with the everyday shortcuts strategy and consulting work relies on: one-click formatting, Harvey balls, meters and keyboard shortcuts. It adds a **Strategy Tools** tab to the PowerPoint ribbon.
+A free PowerPoint add-in with the toolkit strategy consultants rely on, the kind of thing large consulting firms build into their in-house toolbars. It adds a **Strategy Tools** tab to the PowerPoint ribbon with:
 
-Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later).
+- **Format:** swap objects, match size/width/height to the first object clicked, harmonise titles, match corners and formatting
+- **Visuals:** Harvey balls, meters, status icons, chevrons, numbered trackers
+- **Frameworks:** 2×2 matrix, process flow, Gantt, issue tree, key takeaways panel, rating scale, CAGR arrow
+- **Storyline:** agenda with highlighted dividers and section tags, storyline overview, deck check report
+- **Review:** status stamps, sticky notes, source footers, back-up labels, clean-for-sending copy, font fixer
+- **Keyboard shortcuts:** new text box, align left/right/top/bottom, and a searchable shortcuts cheat sheet
+
+Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later). Windows isn't supported.
 
 ---
 
@@ -61,6 +68,12 @@ Harvey balls, meters, chevrons and trackers use the template's main accent colou
 | **Clean for Sending** | Saves "*name* (client).pptx" next to the deck with no stamps, sticky notes, speaker notes or comments, and opens it. The original is not changed. The deck must be saved first. |
 | **Fix Fonts** | Lists fonts that aren't the template's heading/body fonts and, after asking, replaces them everywhere (slides, notes, masters). Symbol fonts are left alone. |
 
+### Help
+| Button | How to use it |
+|---|---|
+| **Text Box** | Drops a ready-to-type text box in the middle of the slide (same as Ctrl + Q). |
+| **Shortcuts** | Opens the shortcuts cheat sheet in your browser (same as Shift + Cmd + O). |
+
 ### Keyboard shortcuts
 | Keys | Action |
 |---|---|
@@ -77,14 +90,24 @@ With one object selected, the align shortcuts align it to the slide. With two or
 
 ## Install
 
-Send colleagues **`dist/Strategy Tools.zip`**. Full steps are in [src/installer/INSTALL.md](src/installer/INSTALL.md), which is also inside the zip. In short:
+**1. Get the add-in package.** Clone or download this repository, then build it (needs only the Python 3 that comes with macOS developer tools):
+
+```bash
+python3 scripts/build.py
+```
+
+This creates **`dist/Strategy Tools.zip`**, the package you install from and can share with colleagues.
+
+**2. Install it.** Full steps are in [src/installer/INSTALL.md](src/installer/INSTALL.md), which is also inside the zip. In short:
 
 1. Quit PowerPoint and unzip the folder.
-2. Right-click **Install Strategy Tools.command** → **Open** (click **Open** again if macOS warns).
+2. Right-click **Install Strategy Tools.command** → **Open**. The installer isn't signed with an Apple developer certificate, so macOS warns the first time; click **Open** again.
 3. Allow the prompts: **OK** to let Terminal control PowerPoint, **Grant Access**, then **Enable Macros**.
 4. Restart PowerPoint. The **Strategy Tools** tab appears.
 
 To update, run the installer again. To remove it, run **Uninstall Strategy Tools.command**.
+
+**What the installer changes on your Mac:** it copies the add-in and cheat sheet to `~/Library/Application Support/StrategyTools`, adds a small AppleScript helper for PowerPoint, creates two Quick Actions in `~/Library/Services` (for Ctrl+Q and Shift+Cmd+O), adds the Ctrl+Cmd+arrow App Shortcuts for PowerPoint, and loads the add-in. Nothing is sent anywhere; the add-in works offline.
 
 ---
 
