@@ -194,6 +194,20 @@ def misc_icons():
     icons["stMatch"] = render([(rect(6, 10, 30, 34), BLUE), (outline(34, 30, 58, 54, 3.5), BLUE),
                                (stroke(22, 44, 36, 20, 3.5), INK),
                                (polyline([(29, 21), (36, 20), (36, 27)], 3.5), INK)])
+    # Agenda: numbered rows, row 2 highlighted.
+    rows = []
+    for k, y in enumerate((10, 26, 42)):
+        hi = k == 1
+        if hi:
+            rows.append((rect(4, y - 2, 60, y + 14), (220, 232, 248)))
+        rows.append((rect(6, y, 18, y + 12), BLUE if hi else GREY))
+        rows.append((rect(24, y + 4, 56 if hi else 50, y + 8), BLUE if hi else GREY))
+    icons["stAgenda"] = render(rows)
+    icons["stStoryline"] = page([(rect(18, 13, 40, 17), BLUE), (rect(18, 22, 46, 24.5), INK), (rect(18, 28, 43, 30.5), INK),
+                                 (rect(18, 36, 38, 40), BLUE), (rect(18, 45, 46, 47.5), INK), (rect(18, 51, 41, 53.5), INK)])
+    lens = lambda x, y: 9 ** 2 <= (x - 26) ** 2 + (y - 26) ** 2 <= 15 ** 2
+    icons["stDeckCheck"] = render([(circle(26, 26, 12), (232, 240, 250)), (lens, BLUE), (stroke(37, 37, 54, 54, 7), BLUE),
+                                   (polyline([(20, 26), (25, 31), (33, 21)], 4), GREEN)])
     return icons
 
 

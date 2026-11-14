@@ -30,6 +30,16 @@ Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later).
 
 Harvey balls, meters, chevrons and trackers use the template's main accent colour (Accent 1), so they match whichever client template you're in. Status icons use fixed traffic-light colours, so status reads the same everywhere.
 
+### Storyline
+| Button | How to use it |
+|---|---|
+| **Agenda ▾ → New agenda…** | Asks how many sections (2–8) and adds an agenda slide after the current one. Type each section name into its numbered box. |
+| **Agenda ▾ → Divider here** | Select the first slide of a section. A copy of the agenda goes in front of it with that section highlighted and the others greyed out. Sections are numbered in deck order. |
+| **Agenda ▾ → Add section tags** | Optional. Puts a small "2 · CUSTOMER INSIGHTS" tag in the top-right corner of every slide, based on the divider before it. A stamp on the same slide moves to the left of the tag. |
+| **Agenda ▾ → Update agenda** | After renaming sections on the agenda slide or moving slides, refreshes every divider (and the tags, if used). |
+| **Storyline** | Adds a "Storyline" slide at the end listing every slide's title, grouped by section. Clean for Sending removes it. |
+| **Deck Check** | Adds a report slide at the end listing stray fonts, overflowing text, objects off the slide, empty placeholders, missing titles and leftover stamps/sticky notes, by slide number. Clean for Sending removes it. |
+
 ### Review
 | Button | How to use it |
 |---|---|
@@ -89,6 +99,7 @@ src/
   modChevrons.bas      phase chevrons + detail boxes
   modTrackers.bas      numbered / lettered trackers
   modReview.bas        stamps, sticky notes, source footer, back-up, clean, fonts
+  modStoryline.bas     agenda + dividers, section tags, storyline, deck check
   modHelp.bas          Ctrl+Q text box, cheat sheet
   modRibbon.bas        ribbon button callbacks
   customUI14.xml       ribbon tab layout
@@ -120,10 +131,11 @@ python3 scripts/build.py
 # Run tests inside PowerPoint (WARNING: quits PowerPoint without saving)
 scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow \
   T_Status T_Chevrons T_Trackers T_TrackerOverlap \
-  T_Stamps T_StickyFooter T_Backup T_Clean T_FontsCornersMatch
+  T_Stamps T_StickyFooter T_Backup T_Clean T_FontsCornersMatch \
+  T_Agenda T_StorylineCheck
 ```
 
-Each test prints `PASS` or `FAIL …`. `T_Render` and `T_Render2` also export a slide with every visual to a PNG so you can check how they look.
+Each test prints `PASS` or `FAIL …`. `T_Render`, `T_Render2` and `T_Render3` also export a slide with every visual to a PNG so you can check how they look.
 
 To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In short: write `Public Sub ST_YourFeature()` in a module, add a `Rb_` callback in `modRibbon.bas`, add a `<button>` to `customUI14.xml` and rebuild.
 

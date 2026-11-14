@@ -49,5 +49,12 @@ Public Sub Rb_BackupRemove(control As Object):      ST_BackupRemove:      End Su
 Public Sub Rb_CleanForSending(control As Object):   ST_CleanForSending:   End Sub
 Public Sub Rb_FixFonts(control As Object):          ST_FixFonts:          End Sub
 
+Public Sub Rb_AgendaNew(control As Object):        ST_AgendaNew:         End Sub
+Public Sub Rb_AgendaDivider(control As Object):    ST_AgendaDivider:     End Sub
+Public Sub Rb_SectionTags(control As Object):      ST_SectionTags:       End Sub
+Public Sub Rb_AgendaUpdate(control As Object):     ST_AgendaUpdate:      End Sub
+Public Sub Rb_Storyline(control As Object):        ST_Storyline:         End Sub
+Public Sub Rb_DeckCheck(control As Object):        ST_DeckCheck:         End Sub
+
 Public Sub Rb_TextBox(control As Object):       ST_AddTextBox:      End Sub
 Public Sub Rb_Shortcuts(control As Object):     ST_ShowShortcuts:   End Sub

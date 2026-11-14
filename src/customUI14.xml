@@ -67,6 +67,23 @@
           </menu>
         </group>
 
+        <group id="stStory" label="Storyline">
+          <menu id="stAgendaMenu" label="Agenda" size="large" image="stAgenda" itemSize="large"
+                screentip="Agenda and dividers"
+                supertip="Create an agenda you type section names into, then add highlighted agenda dividers before each section.">
+            <button id="stAgendaNew"     label="New agenda..."    onAction="Rb_AgendaNew"/>
+            <button id="stAgendaDivider" label="Divider here (before this slide)" onAction="Rb_AgendaDivider"/>
+            <button id="stAgendaTags"    label="Add section tags to slides" onAction="Rb_SectionTags"/>
+            <button id="stAgendaUpdate"  label="Update agenda"    onAction="Rb_AgendaUpdate"/>
+          </menu>
+          <button id="stStoryline" label="Storyline" size="large" image="stStoryline"
+                  onAction="Rb_Storyline" screentip="Storyline"
+                  supertip="Adds a slide at the end listing every slide's title, grouped by section, so you can read the storyline top to bottom."/>
+          <button id="stDeckCheck" label="Deck Check" size="large" image="stDeckCheck"
+                  onAction="Rb_DeckCheck" screentip="Deck check"
+                  supertip="Lists problems on a report slide at the end: stray fonts, overflowing text, objects off the slide, empty placeholders, missing titles, leftover stamps and sticky notes."/>
+        </group>
+
         <group id="stReview" label="Review">
           <menu id="stStampMenu" label="Stamp" size="large" image="stStamp" itemSize="large"
                 screentip="Status stamp"

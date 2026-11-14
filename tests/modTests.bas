@@ -643,3 +643,162 @@ Public Function T_CleanSteps() As String
     CloseDeck p
     T_CleanSteps = "done"
 End Function
+
+Private Sub SetItem(ByVal m As Object, ByVal i As Long, ByVal text As String)
+    Dim shp As Object
+    For Each shp In m.Shapes
+        If TagOf(shp, "ST_TYPE") = "AGENDA_ITEM" And TagOf(shp, "ST_INDEX") = CStr(i) Then shp.TextFrame.TextRange.Text = text
+    Next shp
+End Sub
+
+Private Function TitledDeck(ByVal n As Long) As Object
+    Dim p As Object, i As Long
+    Set p = NewDeck(n, ppLayoutTitleOnly)
+    For i = 1 To n
+        p.Slides(i).Shapes.Title.TextFrame.TextRange.Text = "Title " & i
+    Next i
+    Set TitledDeck = p
+End Function
+
+Public Function T_Agenda() As String
+    On Error GoTo fail
+    gQuiet = True
+    gLastMessage = ""
+    Dim p As Object, r As String, m As Object, d As Object, i As Long, tag As Collection
+    Set p = TitledDeck(5)              ' Title 1..5
+    ActiveWindow.View.GotoSlide 1
+    Set m = AddAgenda(3)
+    If m Is Nothing Then r = "FAIL no agenda " & gLastMessage: GoTo done
+    If m.SlideIndex <> 2 Or SectionCount() <> 3 Then r = "FAIL agenda slot/count": GoTo done
+    SetItem m, 1, "Alpha": SetItem m, 2, "Beta": SetItem m, 3, "Gamma"
+    ' deck now: 1 T1, 2 Agenda, 3 T2, 4 T3, 5 T4, 6 T5
+    ActiveWindow.View.GotoSlide 3
+    ST_AgendaDivider                   ' before T2 -> section 1
+    ActiveWindow.View.GotoSlide 6      ' T4 (was 5, +1 after divider)
+    ST_AgendaDivider                   ' section 2
+    Set d = p.Slides(3)
+    If TagOf(d, "ST_SLIDE") <> "DIVIDER" Or TagOf(d, "ST_SECTION") <> "1" Then r = "FAIL divider 1 " & gLastMessage: GoTo done
+    If TagOf(p.Slides(6), "ST_SECTION") <> "2" Then r = "FAIL divider 2 at " & TagOf(p.Slides(6), "ST_SLIDE"): GoTo done
+    ' highlight band visible only on the current row
+    Dim shp As Object, visibleBands As String
+    For Each shp In p.Slides(6).Shapes
+        If TagOf(shp, "ST_TYPE") = "AGENDA_BAND" And shp.Visible = ST_TRUE Then visibleBands = visibleBands & TagOf(shp, "ST_INDEX")
+    Next shp
+    If visibleBands <> "2" Then r = "FAIL band " & visibleBands: GoTo done
+    ' tags: T2,T3 -> section 1 ; T4,T5 -> section 2 ; T1 untagged
+    ApplySectionTags
+    If TaggedShapes(p.Slides(1), "SECTIONTAG").Count <> 0 Then r = "FAIL T1 tagged": GoTo done
+    Set tag = TaggedShapes(p.Slides(4), "SECTIONTAG")
+    If tag.Count <> 1 Then r = "FAIL T2 tag count": GoTo done
+    If InStr(tag(1).TextFrame.TextRange.Text, "ALPHA") = 0 Then r = "FAIL T2 tag text " & tag(1).TextFrame.TextRange.Text: GoTo done
+    If InStr(TaggedShapes(p.Slides(8), "SECTIONTAG")(1).TextFrame.TextRange.Text, "BETA") = 0 Then r = "FAIL T5 tag": GoTo done
+    ' stamp sits left of the tag
+    ActiveWindow.View.GotoSlide 4
+    ST_StampDraft
+    If TaggedShapes(p.Slides(4), "STAMP")(1).Left + TaggedShapes(p.Slides(4), "STAMP")(1).Width > TaggedShapes(p.Slides(4), "SECTIONTAG")(1).Left Then r = "FAIL stamp overlaps tag": GoTo done
+    ' rename + update keeps dividers in place and refreshes names
+    SetItem m, 1, "Market"
+    ST_AgendaUpdate
+    If TagOf(p.Slides(3), "ST_SLIDE") <> "DIVIDER" Or TagOf(p.Slides(6), "ST_SLIDE") <> "DIVIDER" Then r = "FAIL update moved dividers": GoTo done
+    If InStr(TaggedShapes(p.Slides(4), "SECTIONTAG")(1).TextFrame.TextRange.Text, "MARKET") = 0 Then r = "FAIL update tag text": GoTo done
+    Dim nameOnDivider As String
+    For Each shp In p.Slides(3).Shapes
+        If TagOf(shp, "ST_TYPE") = "AGENDA_ITEM" And TagOf(shp, "ST_INDEX") = "1" Then nameOnDivider = shp.TextFrame.TextRange.Text
+    Next shp
+    If nameOnDivider <> "Market" Then r = "FAIL divider name " & nameOnDivider: GoTo done
+    If p.Slides.Count <> 8 Then r = "FAIL slide count " & p.Slides.Count: GoTo done
+    ' all sections used: a 4th divider is refused (only 3 sections, but 2 used so 3rd ok)
+    ActiveWindow.View.GotoSlide 8
+    ST_AgendaDivider
+    ActiveWindow.View.GotoSlide 9
+    ST_AgendaDivider
+    If InStr(gLastMessage, "already has a divider") = 0 Then r = "FAIL too many dividers msg=" & gLastMessage: GoTo done
+    r = "PASS"
+done:
+    T_Agenda = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_Agenda = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_StorylineCheck() As String
+    On Error GoTo fail
+    gQuiet = True
+    gLastMessage = ""
+    Dim p As Object, r As String, txt As String, last As Object, tb As Object
+    Set p = TitledDeck(4)
+    ' issues: slide 2 no title, slide 3 shape off slide + overflow, slide 4 stray font + sticky
+    p.Slides(2).Shapes.Title.TextFrame.TextRange.Text = ""
+    p.Slides(3).Shapes.AddShape ST_SHAPE_RECTANGLE, p.PageSetup.SlideWidth - 20, 100, 80, 40
+    Set tb = p.Slides(3).Shapes.AddTextbox(ST_TEXT_HORIZONTAL, 50, 200, 120, 20)
+    tb.TextFrame.AutoSize = ppAutoSizeNone
+    tb.TextFrame.WordWrap = ST_TRUE
+    tb.Height = 20
+    tb.TextFrame.TextRange.Text = "A long line of text that will certainly wrap onto several lines in this narrow box and overflow it"
+    Set tb = p.Slides(4).Shapes.AddTextbox(ST_TEXT_HORIZONTAL, 50, 300, 200, 30)
+    tb.TextFrame.TextRange.Text = "odd font"
+    tb.TextFrame.TextRange.Font.Name = "Courier New"
+    ActiveWindow.View.GotoSlide 4
+    ST_StickyAdd
+    ' storyline
+    ST_Storyline
+    ST_Storyline                        ' twice -> still one storyline slide
+    If ReportSlideCount("STORYLINE") <> 1 Then r = "FAIL storyline count " & ReportSlideCount("STORYLINE"): GoTo done
+    Set last = p.Slides(p.Slides.Count)
+    txt = last.Shapes(last.Shapes.Count).TextFrame.TextRange.Text
+    If InStr(txt, "Title 3") = 0 Or InStr(txt, "(no title)") = 0 Then r = "FAIL storyline text " & txt: GoTo done
+    ' deck check
+    ST_DeckCheck
+    If ReportSlideCount("DECKCHECK") <> 1 Then r = "FAIL deckcheck slide " & gLastMessage: GoTo done
+    Set last = p.Slides(p.Slides.Count)
+    txt = last.Shapes(last.Shapes.Count).TextFrame.TextRange.Text
+    If InStr(txt, "Slide 2") = 0 Or InStr(txt, "No title") = 0 Then r = "FAIL no-title " & txt: GoTo done
+    If InStr(txt, "off the slide") = 0 Then r = "FAIL off-slide " & txt: GoTo done
+    If InStr(txt, "overflows") = 0 Then r = "FAIL overflow " & txt: GoTo done
+    If InStr(txt, "Courier New") = 0 Then r = "FAIL font " & txt: GoTo done
+    If InStr(txt, "Sticky") = 0 Then r = "FAIL sticky " & txt: GoTo done
+    If InStr(txt, "Storyline") > 0 Then r = "FAIL report checked itself": GoTo done
+    ' clean removes both report slides
+    CleanDeck p
+    If ReportSlideCount("STORYLINE") + ReportSlideCount("DECKCHECK") <> 0 Then r = "FAIL clean kept reports": GoTo done
+    r = "PASS"
+done:
+    T_StorylineCheck = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_StorylineCheck = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_Render3() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, m As Object, d As String, i As Long
+    Set p = TitledDeck(4)
+    p.Slides(2).Shapes.Title.TextFrame.TextRange.Text = "Two-thirds of customers would switch for a better digital experience"
+    ActiveWindow.View.GotoSlide 1
+    Set m = AddAgenda(4)
+    SetItem m, 1, "Market overview": SetItem m, 2, "Customer insights": SetItem m, 3, "Operating model": SetItem m, 4, "Next steps"
+    ActiveWindow.View.GotoSlide 3
+    ST_AgendaDivider
+    ActiveWindow.View.GotoSlide 5
+    ST_AgendaDivider
+    ApplySectionTags
+    ActiveWindow.View.GotoSlide 6
+    ST_StampDraft
+    ST_Storyline
+    d = Environ("TMPDIR")
+    p.Slides(2).Export d & "st_r3_agenda.png", "PNG", 1280, 720
+    p.Slides(5).Export d & "st_r3_divider.png", "PNG", 1280, 720
+    p.Slides(6).Export d & "st_r3_tagged.png", "PNG", 1280, 720
+    p.Slides(p.Slides.Count).Export d & "st_r3_storyline.png", "PNG", 1280, 720
+    T_Render3 = "PASS " & d
+    CloseDeck p
+    Exit Function
+fail:
+    T_Render3 = "FAIL error " & Err.Description
+    CloseDeck p
+End Function

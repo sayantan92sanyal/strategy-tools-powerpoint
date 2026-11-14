@@ -101,6 +101,7 @@ Private Sub StampOn(ByVal sld As Object, ByVal label As String)
     shp.TextFrame.TextRange.Text = UCase$(label)
     shp.Tags.Add "ST_TEXT", label
     shp.Name = "Stamp " & label
+    ArrangeTopRight sld
 End Sub
 
 ' ---------------------------------------------------------------- sticky notes
@@ -394,6 +395,11 @@ Public Sub CleanDeck(ByVal p As Object)
     Dim sld As Object
     RemoveTagged p, "STAMP"
     RemoveTagged p, "STICKY"
+    Dim i As Long, kind As String
+    For i = p.Slides.Count To 1 Step -1
+        kind = TagOf(p.Slides(i), "ST_SLIDE")
+        If kind = "STORYLINE" Or kind = "DECKCHECK" Then p.Slides(i).Delete
+    Next i
     For Each sld In p.Slides
         SetNotesText sld, ""
         DeleteComments sld
