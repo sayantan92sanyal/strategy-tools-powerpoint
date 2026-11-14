@@ -903,3 +903,71 @@ fail:
     T_Render4 = "FAIL error " & Err.Description
     CloseDeck p
 End Function
+
+Public Function T_GanttTree() As String
+    On Error GoTo fail
+    gQuiet = True
+    gLastMessage = ""
+    Dim p As Object, r As String, g As Object, wk As Boolean, tb As Object, i As Long, boxes As Long, lines As Long
+    Set p = TitledDeck(2)
+    ' span parsing
+    If ParseSpan("6 months", wk) <> 6 Or wk Then r = "FAIL parse months": GoTo done
+    If ParseSpan("12 weeks", wk) <> 12 Or Not wk Then r = "FAIL parse weeks": GoTo done
+    If ParseSpan("12w", wk) <> 12 Or ParseSpan("soon", wk) <> 0 Or ParseSpan("40 months", wk) <> 0 Then r = "FAIL parse edge": GoTo done
+    ' gantt: 4 rows, 6 months -> header + 6 labels + 5 gridlines + 4 labels + 4 bars + milestone label + 2 diamonds = 23
+    ActiveWindow.View.GotoSlide 1
+    Set g = AddGantt(4, "6 months")
+    If g Is Nothing Then r = "FAIL gantt " & gLastMessage: GoTo done
+    If g.GroupItems.Count <> 23 Then r = "FAIL gantt parts " & g.GroupItems.Count: GoTo done
+    If Not InsideSlide(g, p) Then r = "FAIL gantt off slide": GoTo done
+    If Not (AddGantt(4, "forever") Is Nothing) Then r = "FAIL gantt bad span accepted": GoTo done
+    ' issue tree: starter when nothing selected, then build from it
+    ActiveWindow.View.GotoSlide 2
+    ActiveWindow.Selection.Unselect
+    ST_IssueTree
+    If InStr(gLastMessage, "Edit this outline") = 0 Then r = "FAIL no starter msg": GoTo done
+    Set tb = p.Slides(2).Shapes(p.Slides(2).Shapes.Count)
+    Set g = BuildIssueTree(tb)
+    If g Is Nothing Then r = "FAIL tree " & gLastMessage: GoTo done
+    For i = 1 To g.GroupItems.Count
+        If g.GroupItems(i).Type = 1 Then boxes = boxes + 1 Else lines = lines + 1
+    Next i
+    If boxes <> 7 Or lines <> 6 Then r = "FAIL tree parts boxes=" & boxes & " lines=" & lines: GoTo done
+    If Not InsideSlide(g, p) Then r = "FAIL tree off slide": GoTo done
+    If p.Slides(2).Shapes.Count <> 2 Then r = "FAIL outline not replaced (" & p.Slides(2).Shapes.Count & ")": GoTo done
+    ' tab-indented plain text works too
+    Set tb = p.Slides(2).Shapes.AddTextbox(ST_TEXT_HORIZONTAL, 50, 50, 300, 100)
+    tb.TextFrame.TextRange.Text = "Root" & vbCr & vbTab & "A" & vbCr & vbTab & vbTab & "A1" & vbCr & vbTab & "B"
+    Set g = BuildIssueTree(tb)
+    If g.GroupItems.Count <> 7 Then r = "FAIL tab tree " & g.GroupItems.Count: GoTo done
+    r = "PASS"
+done:
+    T_GanttTree = r
+    CloseDeck p
+    Exit Function
+fail:
+    T_GanttTree = "FAIL error " & Err.Description & " msg=" & gLastMessage
+    CloseDeck p
+End Function
+
+Public Function T_Render5() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, d As String
+    Set p = TitledDeck(2)
+    p.Slides(1).Shapes.Title.TextFrame.TextRange.Text = "Transformation roadmap"
+    p.Slides(2).Shapes.Title.TextFrame.TextRange.Text = "Where could the extra profit come from?"
+    ActiveWindow.View.GotoSlide 1
+    AddGantt 4, "6 months"
+    ActiveWindow.View.GotoSlide 2
+    BuildIssueTree AddOutlineStarter()
+    d = Environ("TMPDIR")
+    p.Slides(1).Export d & "st_r5_1.png", "PNG", 1280, 720
+    p.Slides(2).Export d & "st_r5_2.png", "PNG", 1280, 720
+    T_Render5 = "PASS"
+    CloseDeck p
+    Exit Function
+fail:
+    T_Render5 = "FAIL error " & Err.Description
+    CloseDeck p
+End Function

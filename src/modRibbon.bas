@@ -58,6 +58,8 @@ Public Sub Rb_DeckCheck(control As Object):        ST_DeckCheck:         End Sub
 
 Public Sub Rb_Matrix(control As Object):           ST_Matrix:            End Sub
 Public Sub Rb_ProcessFlow(control As Object):      ST_ProcessFlow:       End Sub
+Public Sub Rb_Gantt(control As Object):            ST_Gantt:             End Sub
+Public Sub Rb_IssueTree(control As Object):        ST_IssueTree:         End Sub
 Public Sub Rb_Takeaways(control As Object):        ST_Takeaways:         End Sub
 Public Sub Rb_Cagr(control As Object):             ST_Cagr:              End Sub
 

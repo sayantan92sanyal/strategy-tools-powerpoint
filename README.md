@@ -35,6 +35,8 @@ Harvey balls, meters, chevrons and trackers use the template's main accent colou
 |---|---|
 | **2x2 Matrix** | Four shaded quadrants with editable titles, axes with arrows and editable axis labels, filling the slide body under the title. |
 | **Process Flow** | Asks how many steps (2–7), then adds numbered circles on a connecting line with a step name and description under each. |
+| **Gantt** | Asks for the number of rows (2–10) and the span ("6 months" or "12 weeks"). Adds a timeline header starting this month, gridlines, a labelled bar per row and two milestone diamonds. Stretch and move the bars to set dates (not linked to Excel). |
+| **Issue Tree** | Type an outline in a text box, one item per line with Tab to indent (up to 4 levels), select it and click. The tree is laid out left to right with connectors and replaces the outline. With nothing selected, an example outline is added to edit. |
 | **Key Takeaways** | A panel on the right of the slide: accent "Key takeaways" header with a bulleted list below. If the slide already has one, it's selected instead. |
 | **Rating ▾** | One to five filled dots. Select existing ratings and pick a score to update them in place. |
 | **CAGR Arrow** | Select the first and last bar (or nothing), then enter start value, end value and years. Adds an elbow arrow with the growth rate per year (e.g. "+26% p.a."). Without two shapes selected it lands mid-slide to drag into place. |
@@ -110,6 +112,7 @@ src/
   modReview.bas        stamps, sticky notes, source footer, back-up, clean, fonts
   modStoryline.bas     agenda + dividers, section tags, storyline, deck check
   modFrameworks.bas    2x2 matrix, process flow, key takeaways, rating, CAGR arrow
+  modPlanning.bas      Gantt / timeline, issue tree
   modHelp.bas          Ctrl+Q text box, cheat sheet
   modRibbon.bas        ribbon button callbacks
   customUI14.xml       ribbon tab layout
@@ -142,10 +145,10 @@ python3 scripts/build.py
 scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow \
   T_Status T_Chevrons T_Trackers T_TrackerOverlap \
   T_Stamps T_StickyFooter T_Backup T_Clean T_FontsCornersMatch \
-  T_Agenda T_StorylineCheck T_Frameworks
+  T_Agenda T_StorylineCheck T_Frameworks T_GanttTree
 ```
 
-Each test prints `PASS` or `FAIL …`. `T_Render` to `T_Render4` also export a slide with every visual to a PNG so you can check how they look.
+Each test prints `PASS` or `FAIL …`. `T_Render` to `T_Render5` also export a slide with every visual to a PNG so you can check how they look.
 
 To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In short: write `Public Sub ST_YourFeature()` in a module, add a `Rb_` callback in `modRibbon.bas`, add a `<button>` to `customUI14.xml` and rebuild.
 

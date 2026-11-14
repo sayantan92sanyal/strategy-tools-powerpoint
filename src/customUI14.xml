@@ -74,6 +74,12 @@
           <button id="stProcess" label="Process Flow" size="large" image="stProcess"
                   onAction="Rb_ProcessFlow" screentip="Process flow"
                   supertip="Asks how many steps, then adds numbered circles on a line with a name and description under each."/>
+          <button id="stGantt" label="Gantt" size="large" image="stGantt"
+                  onAction="Rb_Gantt" screentip="Gantt / timeline"
+                  supertip="Asks for the number of rows and the span (months or weeks), then adds a timeline with bars and milestone markers to stretch into place."/>
+          <button id="stIssueTree" label="Issue Tree" size="large" image="stIssueTree"
+                  onAction="Rb_IssueTree" screentip="Issue tree"
+                  supertip="Type an outline in a text box (Tab to indent), select it and click. With nothing selected, adds an example outline to edit."/>
           <button id="stTakeaway" label="Key Takeaways" size="large" image="stTakeaway"
                   onAction="Rb_Takeaways" screentip="Key takeaways panel"
                   supertip="A panel on the right of the slide with a Key takeaways header and a bulleted list."/>

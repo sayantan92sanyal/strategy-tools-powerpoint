@@ -221,6 +221,17 @@ def misc_icons():
     icons["stCagr"] = render([(rect(8, 40, 20, 58), BLUE), (rect(26, 32, 38, 58), BLUE), (rect(44, 22, 56, 58), BLUE),
                               (polyline([(14, 34), (14, 8), (50, 8), (50, 14)], 3), INK),
                               (lambda x, y: y >= 13 and abs(x - 50) <= (20 - y) * 0.8 and y <= 20, INK)])
+    icons["stGantt"] = render([(rect(4, 6, 60, 13), GREY),
+                               (rect(6, 18, 28, 26), BLUE), (rect(20, 31, 44, 39), BLUE), (rect(36, 44, 58, 52), BLUE),
+                               (lambda x, y: abs(x - 14) + abs(y - 56) <= 5, (240, 162, 2))])
+    icons["stIssueTree"] = render([(rect(2, 26, 18, 38), BLUE),
+                                   (polyline([(18, 32), (24, 32)], 2.5), INK), (polyline([(24, 14), (24, 50)], 2.5), INK),
+                                   (polyline([(24, 14), (30, 14)], 2.5), INK), (polyline([(24, 50), (30, 50)], 2.5), INK),
+                                   (rect(30, 8, 46, 20), (150, 180, 220)), (rect(30, 44, 46, 56), (150, 180, 220)),
+                                   (polyline([(46, 14), (50, 14)], 2), INK), (polyline([(50, 6), (50, 22)], 2), INK),
+                                   (rect(52, 2, 62, 10), GREY), (rect(52, 18, 62, 26), GREY),
+                                   (polyline([(46, 50), (50, 50)], 2), INK), (polyline([(50, 42), (50, 58)], 2), INK),
+                                   (rect(52, 38, 62, 46), GREY), (rect(52, 54, 62, 62), GREY)])
     return icons
 
 

@@ -41,6 +41,8 @@ The first time you press **Ctrl+Q**, macOS asks whether it can control PowerPoin
 | **Chevrons** | Asks how many, then adds a row of phase chevrons with a detail text box under each. |
 | **Tracker ▾** | Adds the next numbered (1, 2, 3…) or lettered (A, B, C…) circle, or your own short text. |
 | **2x2 Matrix / Process Flow** | One-click 2×2 matrix, or numbered process steps (asks how many). |
+| **Gantt** | Timeline with bars and milestones (asks rows and months/weeks). |
+| **Issue Tree** | Turns an indented outline in a text box into a left-to-right tree. |
 | **Key Takeaways** | Right-hand panel with a "Key takeaways" header and bullets. |
 | **Rating ▾** | 1–5 dot rating, updatable in place. |
 | **CAGR Arrow** | Arrow between two bars labelled with the yearly growth rate. |
