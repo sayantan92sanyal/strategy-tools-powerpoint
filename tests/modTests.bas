@@ -971,3 +971,107 @@ fail:
     T_Render5 = "FAIL error " & Err.Description
     CloseDeck p
 End Function
+
+' Builds README showcase slides and exports them as PNGs (sc_*.png).
+Private Function CellText(ByVal sld As Object, ByVal txt As String, ByVal x As Single, ByVal y As Single, _
+                          ByVal w As Single, ByVal bold As Boolean, ByVal size As Single) As Object
+    Dim tb As Object
+    Set tb = sld.Shapes.AddTextbox(ST_TEXT_HORIZONTAL, x, y, w, 24)
+    tb.TextFrame.TextRange.Text = txt
+    tb.TextFrame.TextRange.Font.Size = size
+    tb.TextFrame.TextRange.Font.Bold = IIf(bold, ST_TRUE, ST_FALSE)
+    tb.TextFrame.WordWrap = ST_TRUE
+    Set CellText = tb
+End Function
+
+Private Sub PlaceLast(ByVal sld As Object, ByVal cx As Single, ByVal cy As Single, ByVal h As Single)
+    With sld.Shapes(sld.Shapes.Count)
+        .LockAspectRatio = ST_TRUE
+        .Height = h
+        .Left = cx - .Width / 2
+        .Top = cy - .Height / 2
+    End With
+End Sub
+
+Public Function T_Showcase() As String
+    On Error GoTo fail
+    gQuiet = True
+    Dim p As Object, sld As Object, d As String, i As Long, y As Single, cols As Variant
+    Dim names As Variant, harvey As Variant, meters As Variant, stat As Variant, rate As Variant
+    Set p = TitledDeck(2)
+    d = Environ("TMPDIR")
+    ' ---- slide 1: initiative tracker built from add-in visuals
+    Set sld = p.Slides(1)
+    sld.Shapes.Title.TextFrame.TextRange.Text = "Pricing and digital initiatives offer the best impact for effort"
+    sld.Shapes.Title.TextFrame.TextRange.Font.Size = 28
+    ActiveWindow.View.GotoSlide 1
+    cols = Array(470, 570, 670, 790)
+    CellText sld, "Initiative", 110, 150, 300, True, 14
+    CellText(sld, "Impact", cols(0) - 50, 150, 100, True, 14).TextFrame.TextRange.ParagraphFormat.Alignment = ppAlignCenter
+    CellText(sld, "Effort", cols(1) - 50, 150, 100, True, 14).TextFrame.TextRange.ParagraphFormat.Alignment = ppAlignCenter
+    CellText(sld, "Status", cols(2) - 50, 150, 100, True, 14).TextFrame.TextRange.ParagraphFormat.Alignment = ppAlignCenter
+    CellText(sld, "Priority", cols(3) - 60, 150, 120, True, 14).TextFrame.TextRange.ParagraphFormat.Alignment = ppAlignCenter
+    names = Array("Value-based pricing", "Self-service digital channel", "Supplier consolidation", "Shared-service finance")
+    harvey = Array(100, 75, 50, 25)
+    meters = Array(1, 2, 3, 3)
+    stat = Array("COMPLETE", "INPROGRESS", "DELAYED", "NOTSTARTED")
+    rate = Array(5, 4, 3, 2)
+    For i = 0 To 3
+        y = 215 + i * 62
+        ActiveWindow.Selection.Unselect
+        ST_TrackerNumber
+        With sld.Shapes(sld.Shapes.Count)
+            .Left = 70: .Top = y - .Height / 2
+        End With
+        CellText sld, CStr(names(i)), 110, y - 12, 330, False, 15
+        ActiveWindow.Selection.Unselect
+        HarveyBall harvey(i): PlaceLast sld, cols(0), y, 30
+        ActiveWindow.Selection.Unselect
+        Meter meters(i): PlaceLast sld, cols(1), y, 28
+        ActiveWindow.Selection.Unselect
+        StatusIcon stat(i): PlaceLast sld, cols(2), y, 30
+        ActiveWindow.Selection.Unselect
+        RatingScale rate(i): PlaceLast sld, cols(3), y, 12
+    Next i
+    sld.Shapes.AddLine(60, 185, 880, 185).Line.ForeColor.RGB = RGB(201, 206, 214)
+    sld.Export d & "sc_visuals.png", "PNG", 1600, 900
+    ' ---- slide 2: content slide with review tools
+    Set sld = p.Slides(2)
+    sld.Shapes.Title.TextFrame.TextRange.Text = "Two-thirds of customers would switch for a better digital experience"
+    sld.Shapes.Title.TextFrame.TextRange.Font.Size = 26
+    ActiveWindow.View.GotoSlide 2
+    Dim proc As Object, panel As Object, k As Long, lbl As Variant
+    Set panel = AddTakeaways()
+    With panel.GroupItems(2).TextFrame.TextRange
+        .Text = "Digital is the #1 reason customers switch" & vbCr & "Churn peaks in the first year" & vbCr & "Onboarding fixes are quick wins"
+    End With
+    Set proc = AddProcess(3)
+    proc.LockAspectRatio = ST_TRUE
+    proc.Width = panel.Left - proc.Left - 30
+    lbl = Array("Diagnose", "Redesign journeys", "Pilot and scale")
+    For k = 1 To proc.GroupItems.Count
+        If proc.GroupItems(k).HasTextFrame = ST_TRUE Then
+            With proc.GroupItems(k).TextFrame.TextRange
+                If InStr(.Text, "Step ") = 1 Then .Replace "Step " & Mid$(.Text, 6, 1), lbl(CLng(Mid$(.Text, 6, 1)) - 1)
+            End With
+        End If
+    Next k
+    ActiveWindow.View.GotoSlide 2
+    ST_StampDraft
+    AddFooter False
+    With TaggedShapes(sld, "FOOTER")(1).TextFrame.TextRange
+        .Text = "Source: Customer survey 2025 (n=2,100); team analysis"
+    End With
+    ST_StickyAdd
+    With TaggedShapes(sld, "STICKY")(1)
+        .TextFrame.TextRange.Text = "Check sample size with client" & vbCr & "- SS"
+        .Left = 150: .Top = 320
+    End With
+    sld.Export d & "sc_review.png", "PNG", 1600, 900
+    T_Showcase = "PASS " & d
+    CloseDeck p
+    Exit Function
+fail:
+    T_Showcase = "FAIL error " & Err.Description & " line " & Erl
+    CloseDeck p
+End Function

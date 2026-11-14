@@ -35,6 +35,9 @@ Unzip it, double-click **Install Strategy Tools.command** and follow the [instal
 | **Match Format** | Select 2+ objects. Fill, outline, shadow, font and text colour are copied from the first one clicked. Sizes and positions stay. |
 
 ### Visuals
+![Initiative tracker built with trackers, Harvey balls, meters, status icons and ratings](docs/images/visuals.png)
+*An initiative tracker built entirely from one-click visuals: trackers, Harvey balls, meters, status icons and ratings.*
+
 | Button | How to use it |
 |---|---|
 | **Harvey Ball ▾** | Pick 0%, 25%, 50%, 75% or 100%. A Harvey ball appears in the middle of the slide. To change an existing one, select it and pick a new level. |
@@ -46,6 +49,9 @@ Unzip it, double-click **Install Strategy Tools.command** and follow the [instal
 Harvey balls, meters, chevrons and trackers use the template's main accent colour (Accent 1), so they match whichever client template you're in. Status icons use fixed traffic-light colours, so status reads the same everywhere.
 
 ### Frameworks
+![2x2 matrix, process flow, Gantt and issue tree slides](docs/images/frameworks.png)
+*2×2 matrix, process flow, Gantt and issue tree, each inserted in one click.*
+
 | Button | How to use it |
 |---|---|
 | **2x2 Matrix** | Four shaded quadrants with editable titles, axes with arrows and editable axis labels, filling the slide body under the title. |
@@ -57,6 +63,9 @@ Harvey balls, meters, chevrons and trackers use the template's main accent colou
 | **CAGR Arrow** | Select the first and last bar (or nothing), then enter start value, end value and years. Adds an elbow arrow with the growth rate per year (e.g. "+26% p.a."). Without two shapes selected it lands mid-slide to drag into place. |
 
 ### Storyline
+![Agenda divider with the current section highlighted, and a slide with stamp, sticky note, key takeaways panel and source footer](docs/images/storyline-review.png)
+*Left: an agenda divider with the current section highlighted. Right: a draft slide with a stamp, sticky note, key takeaways panel and source footer.*
+
 | Button | How to use it |
 |---|---|
 | **Agenda ▾ → New agenda…** | Asks how many sections (2–8) and adds an agenda slide after the current one. Type each section name into its numbered box. |
