@@ -11,6 +11,8 @@ A free PowerPoint add-in with the toolkit strategy consultants rely on, the kind
 
 Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later). Windows isn't supported.
 
+![Strategy Tools demo: toolbar, one-click visuals, frameworks, storyline and review tools](docs/images/demo.gif)
+
 ![The Strategy Tools tab in PowerPoint for Mac](docs/images/toolbar.png)
 *The Strategy Tools tab: Format, Visuals, Frameworks, Storyline, Review and Help groups.*
 
