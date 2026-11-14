@@ -192,3 +192,9 @@ To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In s
 | "Macros are disabled" | PowerPoint → Settings → Security & Privacy → *Disable all macros with notification*, restart, then click **Enable Macros**. |
 | A shortcut does nothing | Restart PowerPoint. Check System Settings → Keyboard → Keyboard Shortcuts → **Services** ("ST New Text Box", "ST Shortcuts Cheat Sheet") and **App Shortcuts**. |
 | Ctrl+Q does nothing the first time | macOS asks permission to control PowerPoint. Click **OK**, or allow it in System Settings → Privacy & Security → Automation. |
+
+---
+
+## License
+
+[MIT](LICENSE): free to use, modify and share, including commercially. Keep the copyright notice in copies.
