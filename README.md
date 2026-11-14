@@ -11,6 +11,14 @@ A free PowerPoint add-in with the toolkit strategy consultants rely on, the kind
 
 Built for **PowerPoint for Mac** (Microsoft 365 or Office 2019 and later). Windows isn't supported.
 
+### ⬇️ [Download Strategy Tools for Mac (StrategyTools.zip)](https://github.com/sayantan92sanyal/strategy-tools-powerpoint/releases/latest/download/StrategyTools.zip)
+
+Unzip it, double-click **Install Strategy Tools.command** and follow the [install steps](#install). Takes about 3 minutes.
+
+> **Work laptop?** Strategy Tools is a macro add-in. Many company-managed Macs block macros; if PowerPoint never offers **Enable Macros**, the add-in can't run on that Mac.
+
+**Want to build your own version, or add features with AI?** See [Build it with Claude Code](docs/BUILD-WITH-CLAUDE-CODE.md).
+
 ---
 
 ## Features
@@ -90,24 +98,17 @@ With one object selected, the align shortcuts align it to the slide. With two or
 
 ## Install
 
-**1. Get the add-in package.** Clone or download this repository, then build it (needs only the Python 3 that comes with macOS developer tools):
+1. **[Download StrategyTools.zip](https://github.com/sayantan92sanyal/strategy-tools-powerpoint/releases/latest/download/StrategyTools.zip)** and double-click it to unzip. You get a **Strategy Tools** folder.
+2. **Quit PowerPoint**, then double-click **Install Strategy Tools.command** in that folder.
+3. **The first time, macOS blocks it**, because the installer isn't signed with a paid Apple certificate. Click **Done**, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** (then **Open Anyway** again). On older macOS, right-click the file → **Open** → **Open** instead.
+4. Allow the prompts: **OK** to let Terminal control PowerPoint, **Grant Access**, then **Enable Macros**.
+5. When it says **Done**, restart PowerPoint. The **Strategy Tools** tab appears.
 
-```bash
-python3 scripts/build.py
-```
-
-This creates **`dist/Strategy Tools.zip`**, the package you install from and can share with colleagues.
-
-**2. Install it.** Full steps are in [src/installer/INSTALL.md](src/installer/INSTALL.md), which is also inside the zip. In short:
-
-1. Quit PowerPoint and unzip the folder.
-2. Right-click **Install Strategy Tools.command** → **Open**. The installer isn't signed with an Apple developer certificate, so macOS warns the first time; click **Open** again.
-3. Allow the prompts: **OK** to let Terminal control PowerPoint, **Grant Access**, then **Enable Macros**.
-4. Restart PowerPoint. The **Strategy Tools** tab appears.
-
-To update, run the installer again. To remove it, run **Uninstall Strategy Tools.command**.
+Full steps, including what to do if "Open Anyway" doesn't appear, are in [INSTALL.md](src/installer/INSTALL.md), which is also inside the zip. To update, download the latest zip and run the installer again. To remove it, run **Uninstall Strategy Tools.command**.
 
 **What the installer changes on your Mac:** it copies the add-in and cheat sheet to `~/Library/Application Support/StrategyTools`, adds a small AppleScript helper for PowerPoint, creates two Quick Actions in `~/Library/Services` (for Ctrl+Q and Shift+Cmd+O), adds the Ctrl+Cmd+arrow App Shortcuts for PowerPoint, and loads the add-in. Nothing is sent anywhere; the add-in works offline.
+
+Found a bug or have an idea? [Open an issue](https://github.com/sayantan92sanyal/strategy-tools-powerpoint/issues).
 
 ---
 
@@ -150,18 +151,22 @@ scripts/
   icons.py             draws the ribbon menu icons (PNG) at build time
   run-tests.sh         restarts PowerPoint and runs tests
 docs/
-  design.md            design and decisions
-  adding-a-feature.md  how to add new buttons/shortcuts
+  design.md                 design and decisions
+  adding-a-feature.md       how to add new buttons/shortcuts
+  BUILD-WITH-CLAUDE-CODE.md guide + implementation plan for building with AI
+CLAUDE.md                   project rules Claude Code reads automatically
+.github/workflows/
+  release.yml               builds and publishes the zip on version tags
 ```
 
 ---
 
 ## Development
 
-Requires macOS, PowerPoint for Mac and Python 3 (standard library only).
+Requires macOS, PowerPoint for Mac and Python 3 (standard library only). Building with AI? Start with [Build it with Claude Code](docs/BUILD-WITH-CLAUDE-CODE.md); `CLAUDE.md` gives Claude Code the project rules automatically.
 
 ```bash
-# Build the add-in and the shareable zip
+# Build the add-in and the shareable zip (dist/Strategy Tools.zip)
 python3 scripts/build.py
 
 # Run tests inside PowerPoint (WARNING: quits PowerPoint without saving)
@@ -172,6 +177,8 @@ scripts/run-tests.sh T_Swap T_SameSize T_Title T_Visuals T_TextBox T_NoWindow \
 ```
 
 Each test prints `PASS` or `FAIL …`. `T_Render` to `T_Render5` also export a slide with every visual to a PNG so you can check how they look.
+
+**Releasing a new version:** push a version tag (`git tag v1.1.0 && git push origin v1.1.0`). GitHub Actions ([.github/workflows/release.yml](.github/workflows/release.yml)) builds the zip on a Mac runner and attaches it to a Release; the README's Download link always points at the latest one.
 
 To add a feature, see [docs/adding-a-feature.md](docs/adding-a-feature.md). In short: write `Public Sub ST_YourFeature()` in a module, add a `Rb_` callback in `modRibbon.bas`, add a `<button>` to `customUI14.xml` and rebuild.
 

@@ -1,0 +1,46 @@
+# Builds the add-in and publishes it as a GitHub Release whenever a version
+# tag is pushed, e.g.:
+#   git tag v1.1.0 && git push origin v1.1.0
+# The zip is always reachable at
+#   https://github.com/<owner>/<repo>/releases/latest/download/StrategyTools.zip
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to (re)build a release for, e.g. v1.0.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest          # the build uses macOS's `ditto` to zip
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Build add-in package
+        run: |
+          python3 scripts/build.py
+          cp "dist/Strategy Tools.zip" dist/StrategyTools.zip
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          NOTES="Download **StrategyTools.zip** below, unzip it and follow INSTALL.md inside (or the Install section of the README)."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/StrategyTools.zip --clobber
+          else
+            gh release create "$TAG" dist/StrategyTools.zip \
+              --title "Strategy Tools $TAG" \
+              --notes "$NOTES" \
+              --generate-notes
+          fi

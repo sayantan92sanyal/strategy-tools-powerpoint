@@ -120,7 +120,7 @@ def bundle(ppam: Path):
             (folder / f.name).chmod(0o755)
     z = DIST / "Strategy Tools.zip"
     z.unlink(missing_ok=True)
-    subprocess.run(["ditto", "-c", "-k", "--keepParent", str(folder), str(z)], check=True)
+    subprocess.run(["ditto", "-c", "-k", "--norsrc", "--noextattr", "--noacl", "--keepParent", str(folder), str(z)], check=True)
 
 
 if __name__ == "__main__":

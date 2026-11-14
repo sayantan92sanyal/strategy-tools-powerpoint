@@ -1,31 +1,41 @@
 # Strategy Tools for PowerPoint (Mac): Install Guide
 
-Strategy Tools adds a **Strategy Tools** tab to PowerPoint with one-click formatting, Harvey balls, meters and keyboard shortcuts.
+Strategy Tools adds a **Strategy Tools** tab to PowerPoint with one-click formatting, consulting visuals and frameworks, storyline tools, review tools and keyboard shortcuts.
 
-It takes about 2 minutes.
+It takes about 3 minutes.
 
-## You need
+## Before you start
 
-- A Mac with Microsoft PowerPoint (Microsoft 365 or Office 2019 or later)
-- This **Strategy Tools** folder, unzipped
+- **A Mac with Microsoft PowerPoint** (Microsoft 365 or Office 2019 or later). Windows isn't supported.
+- **Macros must be allowed.** Strategy Tools is a macro add-in. Many company-managed Macs block macros or add-ins; if PowerPoint never offers **Enable Macros**, or Settings → Security & Privacy is greyed out, your IT team has locked it and the add-in can't run on that Mac. Personal Macs are fine.
+- The **Strategy Tools** folder, unzipped. Get the latest version from
+  **https://github.com/sayantan92sanyal/strategy-tools-powerpoint/releases/latest/download/StrategyTools.zip**
+  and double-click the zip to unzip it.
 
 ## Install
 
 1. **Quit PowerPoint** if it's open.
-2. In the Strategy Tools folder, **right-click "Install Strategy Tools.command" → Open**.
-   - The first time, macOS warns that it's from an unidentified developer. Click **Open**.
-     (If there's no Open button, go to System Settings → Privacy & Security, scroll down and click **Open Anyway**.)
-3. A Terminal window runs the installer. Answer the prompts as they appear:
+2. In the Strategy Tools folder, **double-click "Install Strategy Tools.command"**.
+3. **The first time, macOS blocks it** ("Apple could not verify…" or "unidentified developer"), because the installer isn't signed with a paid Apple certificate. Click **Done** (or **OK**), then:
+   1. Open **System Settings → Privacy & Security**.
+   2. Scroll down to the message about "Install Strategy Tools.command" and click **Open Anyway**.
+   3. Confirm with **Open Anyway** again and enter your Mac password if asked.
+
+   On older macOS versions you can instead right-click the file → **Open** → **Open**.
+4. A Terminal window runs the installer. Answer the prompts as they appear:
    - *"Terminal wants to control Microsoft PowerPoint"* → **OK**
    - PowerPoint asks about access to the file → **Grant Access** / **Select**
    - PowerPoint asks about macros → **Enable Macros**
-4. When the window says **Done**, press Return, then **quit PowerPoint (Cmd+Q) and open it again**.
-5. You should now see the **Strategy Tools** tab on the ribbon.
+5. When the window says **Done**, press Return, then **quit PowerPoint (Cmd+Q) and open it again**.
+6. You should now see the **Strategy Tools** tab on the ribbon.
 
 The first time you press **Ctrl+Q**, macOS asks whether it can control PowerPoint. Click **OK**. This is a one-off.
 
 > **If the tab doesn't appear:** in PowerPoint choose **Tools → PowerPoint Add-ins…**, click **+**, press **Shift+Cmd+G**, paste
 > `~/Library/Application Support/StrategyTools` and choose **StrategyTools.ppam**. Make sure its box is ticked.
+
+> **If "Open Anyway" never appears** (comfortable with Terminal only): open Terminal and run
+> `xattr -dr com.apple.quarantine ~/Downloads/"Strategy Tools"` (adjust the path if you unzipped elsewhere), then double-click the installer again.
 
 ## What's included
 
@@ -63,7 +73,7 @@ Harvey balls and meters use your template's main accent colour, so they match ea
 
 ## Updating
 
-When you get a new version, run **Install Strategy Tools.command** again and restart PowerPoint.
+Download the latest zip from the link above, unzip it, run **Install Strategy Tools.command** again and restart PowerPoint. Your settings and shortcuts are kept.
 
 ## Uninstall
 
@@ -74,3 +84,5 @@ Run **Uninstall Strategy Tools.command**, then restart PowerPoint.
 - **A shortcut does nothing.** Restart PowerPoint. Then check System Settings → Keyboard → Keyboard Shortcuts → **Services** (look for "ST New Text Box" and "ST Shortcuts Cheat Sheet" under General) and **App Shortcuts** (Microsoft PowerPoint).
 - **"Macros are disabled".** PowerPoint → Settings → Security & Privacy → Macro Security: choose *Disable all macros with notification*, restart, and click **Enable Macros** when asked.
 - **The add-in tab disappeared.** Tools → PowerPoint Add-ins… and tick **StrategyTools**.
+- **"Enable Macros" never appears / macro settings are greyed out.** Your Mac is managed by your employer and macros are blocked. Ask IT, or use the add-in on a personal Mac.
+- **Found a bug or have an idea?** Open an issue: https://github.com/sayantan92sanyal/strategy-tools-powerpoint/issues
